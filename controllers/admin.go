@@ -2,7 +2,7 @@ package controller
 
 import (
 	"github.com/labstack/echo/v4"
-	"github.com/mizuki-n-2/reservation_sample_api/model"
+	"github.com/mizuki-n-2/reservation_sample_api/models"
 	"net/http"
 )
 

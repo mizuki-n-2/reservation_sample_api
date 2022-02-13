@@ -86,3 +86,13 @@ func createToken(adminID string) (string, error) {
 
 	return tokenString, nil
 }
+
+func IsAdmin(id string) bool {
+	db := GetDB()
+
+	if err := db.Where("id = ?", id).First(&Admin{}).Error; err != nil {
+		return false
+	}
+
+	return true
+}

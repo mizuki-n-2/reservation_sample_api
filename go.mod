@@ -3,6 +3,7 @@ module github.com/mizuki-n-2/reservation_sample_api
 go 1.17
 
 require (
+	github.com/google/uuid v1.3.0
 	github.com/joho/godotenv v1.4.0
 	github.com/labstack/echo/v4 v4.6.3
 	gorm.io/driver/mysql v1.2.3

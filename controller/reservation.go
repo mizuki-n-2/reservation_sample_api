@@ -3,7 +3,7 @@ package controller
 import (
 	"github.com/labstack/echo/v4"
 	"net/http"
-	"github.com/mizuki-n-2/reservation_sample_api/models"
+	"github.com/mizuki-n-2/reservation_sample_api/model"
 )
 
 type CreateReservationRequest struct {

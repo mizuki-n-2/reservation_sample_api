@@ -6,8 +6,8 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/mizuki-n-2/reservation_sample_api/controllers"
-	"github.com/mizuki-n-2/reservation_sample_api/models"
+	"github.com/mizuki-n-2/reservation_sample_api/controller"
+	"github.com/mizuki-n-2/reservation_sample_api/model"
 )
 
 func main() {

@@ -5,7 +5,7 @@ import (
 
 	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
-	"github.com/mizuki-n-2/reservation_sample_api/models"
+	"github.com/mizuki-n-2/reservation_sample_api/model"
 )
 
 type ScheduleRequest struct {

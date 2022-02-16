@@ -23,8 +23,6 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
-	e.Static("/", "static")
-
 	// 認証なし
 	e.POST("/signup", controller.CreateAdmin())
 	e.POST("/login", controller.Login())

@@ -1,30 +1,43 @@
 package controller
 
 import (
+	"net/http"
+
 	"github.com/labstack/echo/v4"
 	"github.com/mizuki-n-2/reservation_sample_api/model"
-	"net/http"
+	"github.com/mizuki-n-2/reservation_sample_api/repository"
 )
 
-type CreateAdminRequest struct {
+type AdminController interface {
+	CreateAdmin() echo.HandlerFunc
+	Login() echo.HandlerFunc
+}
+
+type adminController struct {
+	adminRepository repository.AdminRepository
+}
+
+func NewAdminController(adminRepository repository.AdminRepository) AdminController {
+	return &adminController{adminRepository: adminRepository}
+}
+
+type AdminRequest struct {
 	Name     string `json:"name"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
-type LoginRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
-func Login() echo.HandlerFunc {
+func (ac *adminController) Login() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		var req CreateAdminRequest
+		var req AdminRequest
 		if err := c.Bind(&req); err != nil {
 			return c.JSON(http.StatusBadRequest, err.Error())
 		}
 
-		token, err := model.Login(req.Email, req.Password)
+		admin, err := ac.adminRepository.FindByEmail(req.Email)
+
+		token, err := admin.Authenticate(req.Password)
+		// TODO: エラーハンドリング(パスワードが違う場合とその他で分ける)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, err.Error())
 		}
@@ -33,24 +46,26 @@ func Login() echo.HandlerFunc {
 			"token": token,
 		}
 
-		return c.JSON(200, res)
+		return c.JSON(http.StatusOK, res)
 	}
 }
 
-func CreateAdmin() echo.HandlerFunc {
+func (ac *adminController) CreateAdmin() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		var req CreateAdminRequest
+		var req AdminRequest
 		if err := c.Bind(&req); err != nil {
 			return c.JSON(http.StatusBadRequest, err.Error())
 		}
 
-		adminID, err := model.CreateAdmin(req.Name, req.Email, req.Password)
+		admin, err := model.NewAdmin(req.Name, req.Email, req.Password)
+
+		createdAdminID, err := ac.adminRepository.Store(admin)
 		if err != nil {
-			return c.JSON(http.StatusBadRequest, err.Error())
+			return c.JSON(http.StatusInternalServerError, err.Error())
 		}
 
 		res := map[string]string{
-			"id": adminID,
+			"id": createdAdminID,
 		}
 
 		return c.JSON(http.StatusCreated, res)

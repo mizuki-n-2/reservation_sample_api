@@ -4,9 +4,25 @@ import (
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"github.com/mizuki-n-2/reservation_sample_api/model"
+	"github.com/mizuki-n-2/reservation_sample_api/repository"
 )
 
-type CreateReservationRequest struct {
+type ReservationController interface {
+	CreateReservation() echo.HandlerFunc
+	GetReservations() echo.HandlerFunc
+	GetReservation() echo.HandlerFunc
+	DeleteReservation() echo.HandlerFunc
+}
+
+type reservationController struct {
+	reservationRepository repository.ReservationRepository
+}
+
+func NewReservationController(reservationRepository repository.ReservationRepository) ReservationController {
+	return &reservationController{reservationRepository: reservationRepository}
+}
+
+type ReservationRequest struct {
 	Name                     string `json:"name"`
 	Email                    string `json:"email"`
 	PhoneNumber              string `json:"phone_number"`
@@ -17,55 +33,26 @@ type CreateReservationRequest struct {
 	ScheduleID               string `json:"schedule_id"`
 }
 
-func GetReservations() echo.HandlerFunc {
+func (rc *reservationController) GetReservations() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		reservations, err := model.GetReservations()
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, err.Error())
-		}
-
-		return c.JSON(http.StatusOK, reservations)
+		// TODO
 	}
 }
 
-func CreateReservation() echo.HandlerFunc {
+func (rc *reservationController) CreateReservation() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		var req CreateReservationRequest
-		if err := c.Bind(&req); err != nil {
-			return c.JSON(http.StatusBadRequest, err.Error())
-		}
-
-		reservationID, err := model.CreateReservation(req.Name, req.Email, req.PhoneNumber, req.Address, req.AdultNumber, req.PrimarySchoolChildNumber, req.ChildNumber, req.ScheduleID)
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, err.Error())
-		}
-
-		res := map[string]string{
-			"id": reservationID,
-		}
-
-		return c.JSON(http.StatusCreated, res)
+		// TODO	
 	}
 }
 
-func GetReservation() echo.HandlerFunc {
+func (rc *reservationController) GetReservation() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		reservationID := c.Param("id")
-		reservation, err := model.GetReservation(reservationID)
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, err.Error())
-		}
-		return c.JSON(http.StatusOK, reservation)
+		// TODO
 	}
 }
 
-func DeleteReservation() echo.HandlerFunc {
+func (rc *reservationController) DeleteReservation() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		reservationID := c.Param("id")
-		err := model.DeleteReservation(reservationID)
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, err.Error())
-		}
-		return c.JSON(http.StatusNoContent, "")
+		// TODO
 	}
 }

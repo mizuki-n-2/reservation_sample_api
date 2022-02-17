@@ -3,12 +3,32 @@ package main
 import (
 	"os"
 	"fmt"
+	"gorm.io/gorm"
+	"gorm.io/driver/mysql"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/mizuki-n-2/reservation_sample_api/controller"
-	"github.com/mizuki-n-2/reservation_sample_api/model"
+	"github.com/mizuki-n-2/reservation_sample_api/infra"
 )
+
+func initDB() *gorm.DB {
+	var (
+		dbUser = os.Getenv("DB_USER")
+		dbPass = os.Getenv("DB_PASS")
+		dbHost = os.Getenv("DB_HOST")
+		dbPort = os.Getenv("DB_PORT")
+		dbName = os.Getenv("DB_NAME")
+	)
+
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local", dbUser, dbPass, dbHost, dbPort, dbName)
+	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	if err != nil {
+		panic(err)
+	}
+
+	return db
+}
 
 func main() {
 	err := godotenv.Load(".env")
@@ -16,7 +36,15 @@ func main() {
 		fmt.Printf("読み込み出来ませんでした: %v", err)
 	}
 
-	model.InitDB()
+	db := initDB()
+
+	// DI
+	adminRepository := infra.NewAdminRepository(db)
+	scheduleRepository := infra.NewScheduleRepository(db)
+	reservationRepository := infra.NewReservationRepository(db)
+	adminController := controller.NewAdminController(adminRepository)
+	scheduleController := controller.NewScheduleController(scheduleRepository)
+	reservationController := controller.NewReservationController(reservationRepository)
 
 	e := echo.New()
 
@@ -24,21 +52,21 @@ func main() {
 	e.Use(middleware.Recover())
 
 	// 認証なし
-	e.POST("/signup", controller.CreateAdmin())
-	e.POST("/login", controller.Login())
-	e.GET("/reservations", controller.GetReservations())
-	e.POST("/reservations", controller.CreateReservation())	
-	e.GET("/reservations/:id", controller.GetReservation())	
-	e.DELETE("/reservations/:id", controller.DeleteReservation())
-	e.GET("/available-schedules", controller.GetAvailableSchedules())
-	e.GET("/available-schedules/:id", controller.GetAvailableSchedule())
+	e.POST("/signup", adminController.CreateAdmin())
+	e.POST("/login", adminController.Login())
+	e.GET("/reservations", reservationController.GetReservations())
+	e.POST("/reservations", reservationController.CreateReservation())	
+	e.GET("/reservations/:id", reservationController.GetReservation())	
+	e.DELETE("/reservations/:id", reservationController.DeleteReservation())
+	e.GET("/schedules", scheduleController.GetSchedules())
+	e.GET("/schedules/:id", scheduleController.GetSchedule())
 
 	// 認証あり
 	admin := e.Group("/admin")
 	admin.Use(middleware.JWT([]byte(os.Getenv("JWT_SIGNING_KEY"))))
-	admin.POST("/available-schedules", controller.CreateAvailableSchedule())
-	admin.PATCH("/available-schedules/:id", controller.UpdateAvailableSchedule())
-	admin.DELETE("/available-schedules/:id", controller.DeleteAvailableSchedule())
+	admin.POST("/schedules", scheduleController.CreateSchedule())
+	admin.PATCH("/schedules/:id", scheduleController.UpdateSchedule())
+	admin.DELETE("/schedules/:id", scheduleController.DeleteSchedule())
 
 	e.Logger.Fatal(e.Start(":8080"))
 }

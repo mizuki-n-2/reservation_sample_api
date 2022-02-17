@@ -2,20 +2,33 @@ package model
 
 import (
 	"os"
-	"time"
-
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
+	"time"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type Admin struct {
-	ID        string    `json:"id" gorm:"primaryKey;size:36"`
-	Name      string    `json:"name" gorm:"not null;size:20"`
-	Email     string    `json:"email" gorm:"not null;unique"`
-	Password  string    `json:"password" gorm:"not null"`
-	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime;not null"`
-	UpdatedAt time.Time `json:"updated_at" gorm:"autoUpdateTime;not null"`
+	ID        string    `json:"id"`
+	Name      string    `json:"name"`
+	Email     string    `json:"email"`
+	Password  string    `json:"password"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
+func NewAdmin(name, email, password string) (*Admin, error) {
+	// TODO: 作成時のバリデーション(name, email, password)
+	admin := &Admin{
+		ID:        uuid.NewString(),
+		Name:      name,
+		Email:     email,
+		Password:  password,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}
+
+	return admin, nil
 }
 
 type MyCustomClaims struct {
@@ -23,37 +36,8 @@ type MyCustomClaims struct {
 	jwt.StandardClaims
 }
 
-func CreateAdmin(name, email, password string) (string, error) {
-	db := GetDB()
-
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	if err != nil {
-		return "", err
-	}
-
-	admin := Admin{
-		ID:        uuid.NewString(),
-		Name:      name,
-		Email:     email,
-		Password:  string(hashedPassword),
-	}
-
-	if err := db.Create(&admin).Error; err != nil {
-		return "", err
-	}
-
-	return admin.ID, nil
-}
-
-func Login(email, password string) (string, error) {
-	db := GetDB()
-
-	admin := Admin{}
-	db.Where("email = ?", email).First(&admin)
-	if err != nil {
-		return "", err
-	}
-
+// 認証用のトークンを生成する
+func (admin *Admin) Authenticate(password string) (string, error) {
 	err := bcrypt.CompareHashAndPassword([]byte(admin.Password), []byte(password))
 	if err != nil {
 		return "", err
@@ -85,14 +69,4 @@ func createToken(adminID string) (string, error) {
 	}
 
 	return tokenString, nil
-}
-
-func IsAdmin(id string) bool {
-	db := GetDB()
-
-	if err := db.Where("id = ?", id).First(&Admin{}).Error; err != nil {
-		return false
-	}
-
-	return true
 }

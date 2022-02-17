@@ -1,0 +1,16 @@
+CREATE TABLE IF NOT EXISTS reservations (
+  id CHAR(36) NOT NULL,
+  name VARCHAR(20) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  phone_number VARCHAR(20) NOT NULL,
+  address VARCHAR(255) NOT NULL,
+  adult_number INT NOT NULL,
+  primary_school_child_number INT NOT NULL,
+  child_number INT NOT NULL,
+  search_id CHAR(36) NOT NULL,
+  schedule_id CHAR(36) NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  FOREIGN KEY (schedule_id) REFERENCES schedules(id) ON DELETE CASCADE
+);

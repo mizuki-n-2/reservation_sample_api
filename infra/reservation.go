@@ -33,7 +33,7 @@ func (rr *reservationRepository) FindAll() ([]model.Reservation, error) {
 
 func (rr *reservationRepository) FindByID(id string) (model.Reservation, error) {
 	var reservation model.Reservation
-	if err := rr.db.First(&reservation, id).Error; err != nil {
+	if err := rr.db.Where("id = ?", id).First(&reservation).Error; err != nil {
 		return model.Reservation{}, err
 	}
 

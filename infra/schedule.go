@@ -48,7 +48,7 @@ func (sr *scheduleRepository) FindAll() ([]model.Schedule, error) {
 
 func (sr *scheduleRepository) FindByID(id string) (model.Schedule, error) {
 	var schedule model.Schedule
-	if err := sr.db.First(&schedule, id).Error; err != nil {
+	if err := sr.db.Where("id = ?", id).First(&schedule).Error; err != nil {
 		return model.Schedule{}, err
 	}
 

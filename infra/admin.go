@@ -24,7 +24,7 @@ func (ar *adminRepository) Create(admin *model.Admin) (string, error) {
 
 func (ar *adminRepository) FindByID(id string) (model.Admin, error) {
 	var admin model.Admin
-	if err := ar.db.First(&admin, id).Error; err != nil {
+	if err := ar.db.Where("id = ?", id).First(&admin).Error; err != nil {
 		return model.Admin{}, err
 	}
 

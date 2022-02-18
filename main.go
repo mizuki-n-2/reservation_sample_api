@@ -43,7 +43,7 @@ func main() {
 	scheduleRepository := infra.NewScheduleRepository(db)
 	reservationRepository := infra.NewReservationRepository(db)
 	adminController := controller.NewAdminController(adminRepository)
-	scheduleController := controller.NewScheduleController(scheduleRepository)
+	scheduleController := controller.NewScheduleController(scheduleRepository, adminRepository)
 	reservationController := controller.NewReservationController(reservationRepository)
 
 	e := echo.New()
@@ -52,7 +52,7 @@ func main() {
 	e.Use(middleware.Recover())
 
 	// 認証なし
-	e.POST("/signup", adminController.CreateAdmin())
+	e.POST("/admins", adminController.CreateAdmin())
 	e.POST("/login", adminController.Login())
 	e.GET("/reservations", reservationController.GetReservations())
 	e.POST("/reservations", reservationController.CreateReservation())	

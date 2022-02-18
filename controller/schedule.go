@@ -19,10 +19,11 @@ type ScheduleController interface {
 
 type scheduleController struct {
 	scheduleRepository repository.ScheduleRepository
+	adminRepository    repository.AdminRepository
 }
 
-func NewScheduleController(scheduleRepository repository.ScheduleRepository) ScheduleController {
-	return &scheduleController{scheduleRepository: scheduleRepository}
+func NewScheduleController(scheduleRepository repository.ScheduleRepository, adminRepository repository.AdminRepository) ScheduleController {
+	return &scheduleController{scheduleRepository: scheduleRepository, adminRepository: adminRepository}
 }
 
 type ScheduleRequest struct {
@@ -33,7 +34,6 @@ type ScheduleRequest struct {
 
 func (sc *scheduleController) GetSchedules() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		// adminID := getAdminIDFromToken(c)
 		schedules, err := sc.scheduleRepository.FindAll()
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, err.Error())
@@ -45,7 +45,6 @@ func (sc *scheduleController) GetSchedules() echo.HandlerFunc {
 
 func (sc *scheduleController) GetSchedule() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		// adminID := getAdminIDFromToken(c)
 		schedule, err := sc.scheduleRepository.FindByID(c.Param("id"))
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, err.Error())
@@ -57,6 +56,11 @@ func (sc *scheduleController) GetSchedule() echo.HandlerFunc {
 
 func (sc *scheduleController) CreateSchedule() echo.HandlerFunc {
 	return func(c echo.Context) error {
+		err := auth(c, sc.adminRepository)
+		if err != nil {
+			return c.JSON(http.StatusUnauthorized, err.Error())
+		}
+
 		var req ScheduleRequest
 		if err := c.Bind(&req); err != nil {
 			return c.JSON(http.StatusBadRequest, err.Error())
@@ -82,7 +86,11 @@ func (sc *scheduleController) CreateSchedule() echo.HandlerFunc {
 
 func (sc *scheduleController) UpdateSchedule() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		// adminID := getAdminIDFromToken(c)
+		err := auth(c, sc.adminRepository)
+		if err != nil {
+			return c.JSON(http.StatusUnauthorized, err.Error())
+		}
+
 		var req ScheduleRequest
 		if err := c.Bind(&req); err != nil {
 			return c.JSON(http.StatusBadRequest, err.Error())
@@ -104,9 +112,13 @@ func (sc *scheduleController) UpdateSchedule() echo.HandlerFunc {
 
 func (sc *scheduleController) DeleteSchedule() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		// adminID := getAdminIDFromToken(c)
+		err := auth(c, sc.adminRepository)
+		if err != nil {
+			return c.JSON(http.StatusUnauthorized, err.Error())
+		}
+
 		id := c.Param("id")
-		_, err := sc.scheduleRepository.FindByID(id)
+		_, err = sc.scheduleRepository.FindByID(id)
 		if err != nil {
 			return c.JSON(http.StatusNotFound, err.Error())
 		}
@@ -120,10 +132,15 @@ func (sc *scheduleController) DeleteSchedule() echo.HandlerFunc {
 	}
 }
 
-// これをどこに置くか
-func getAdminIDFromToken(c echo.Context) string {
+func auth(c echo.Context, adminRepository repository.AdminRepository) error {
 	user := c.Get("user").(*jwt.Token)
 	claims := user.Claims.(jwt.MapClaims)
 	adminID := claims["admin_id"].(string)
-	return adminID
+
+	_, err := adminRepository.FindByID(adminID)
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, "admin_id is invalid")
+	}
+
+	return nil
 }

@@ -36,7 +36,6 @@ type MyCustomClaims struct {
 	jwt.StandardClaims
 }
 
-// 認証用のトークンを生成する
 func (admin *Admin) Authenticate(password string) (string, error) {
 	err := bcrypt.CompareHashAndPassword([]byte(admin.Password), []byte(password))
 	if err != nil {

@@ -101,6 +101,9 @@ func (sc *scheduleController) UpdateSchedule() echo.HandlerFunc {
 			return c.JSON(http.StatusNotFound, err.Error())
 		}
 
+		// TODO: maxNumberのバリデーション
+		schedule.MaxNumber = req.MaxNumber
+
 		err = sc.scheduleRepository.Update(&schedule)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, err.Error())

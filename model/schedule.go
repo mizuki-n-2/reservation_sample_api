@@ -1,18 +1,18 @@
 package model
 
 import (
-	"time"
 	"github.com/google/uuid"
+	"time"
 )
 
 type Schedule struct {
-	ID                string `json:"id"`
-	Date              string `json:"date"`
-	StartTime         string `json:"start_time"`
-	MaxNumber         int    `json:"max_number"`
-	Reservations      []Reservation
-	CreatedAt         time.Time `json:"created_at"`
-	UpdatedAt         time.Time `json:"updated_at"`
+	ID                string        `json:"id"`
+	Date              string        `json:"date"`
+	StartTime         string        `json:"start_time"`
+	MaxNumber         int           `json:"max_number"`
+	Reservations      []Reservation `gorm:"foreignKey:ScheduleID"`
+	CreatedAt         time.Time     `json:"created_at"`
+	UpdatedAt         time.Time     `json:"updated_at"`
 }
 
 func NewSchedule(date, startTime string, maxNumber int) (*Schedule, error) {

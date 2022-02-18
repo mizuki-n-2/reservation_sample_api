@@ -1,8 +1,6 @@
 package infra
 
 import (
-	"log"
-
 	"github.com/mizuki-n-2/reservation_sample_api/model"
 	"github.com/mizuki-n-2/reservation_sample_api/repository"
 	"gorm.io/gorm"
@@ -34,14 +32,13 @@ func (sr *scheduleRepository) Update(schedule *model.Schedule) error {
 
 func (sr *scheduleRepository) FindAll() ([]model.Schedule, error) {
 	var schedules []model.Schedule
-	var reservations []model.Reservation
-	err := sr.db.Model(&schedules).Association("Reservations").Find(&reservations)
-	if err != nil {
+	if err := sr.db.Find(&schedules).Error; err != nil {
 		return nil, err
 	}
 
-	log.Println(reservations)
-	log.Println(schedules)
+	for i := 0; i < len(schedules); i++ {
+		sr.db.Model(&schedules[i]).Association("Reservations").Find(&schedules[i].Reservations)
+	}
 
 	return schedules, nil
 }
@@ -51,6 +48,8 @@ func (sr *scheduleRepository) FindByID(id string) (model.Schedule, error) {
 	if err := sr.db.Where("id = ?", id).First(&schedule).Error; err != nil {
 		return model.Schedule{}, err
 	}
+
+	sr.db.Model(&schedule).Association("Reservations").Find(&schedule.Reservations)
 
 	return schedule, nil
 }

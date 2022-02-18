@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
@@ -32,6 +33,16 @@ type ScheduleRequest struct {
 	MaxNumber int    `json:"max_number"`
 }
 
+type ScheduleResponse struct {
+	ID                string    `json:"id"`
+	Date              string    `json:"date"`
+	StartTime         string    `json:"start_time"`
+	ReservationNumber int       `json:"reservation_number"`
+	MaxNumber         int       `json:"max_number"`
+	CreatedAt         time.Time `json:"created_at"`
+	UpdatedAt         time.Time `json:"updated_at"`
+}
+
 func (sc *scheduleController) GetSchedules() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		schedules, err := sc.scheduleRepository.FindAll()
@@ -39,7 +50,20 @@ func (sc *scheduleController) GetSchedules() echo.HandlerFunc {
 			return c.JSON(http.StatusInternalServerError, err.Error())
 		}
 
-		return c.JSON(http.StatusOK, schedules)
+		res := make([]ScheduleResponse, len(schedules))
+		for i, schedule := range schedules {
+			res[i] = ScheduleResponse{
+				ID:                schedule.ID,
+				Date:              schedule.Date,
+				StartTime:         schedule.StartTime,
+				ReservationNumber: len(schedule.Reservations),
+				MaxNumber:         schedule.MaxNumber,
+				CreatedAt:         schedule.CreatedAt,
+				UpdatedAt:         schedule.UpdatedAt,
+			}
+		}
+
+		return c.JSON(http.StatusOK, res)
 	}
 }
 
@@ -50,7 +74,17 @@ func (sc *scheduleController) GetSchedule() echo.HandlerFunc {
 			return c.JSON(http.StatusInternalServerError, err.Error())
 		}
 
-		return c.JSON(http.StatusOK, schedule)
+		res := ScheduleResponse{
+			ID:                schedule.ID,
+			Date:              schedule.Date,
+			StartTime:         schedule.StartTime,
+			ReservationNumber: len(schedule.Reservations),
+			MaxNumber:         schedule.MaxNumber,
+			CreatedAt:         schedule.CreatedAt,
+			UpdatedAt:         schedule.UpdatedAt,
+		}
+
+		return c.JSON(http.StatusOK, res)
 	}
 }
 

@@ -44,7 +44,7 @@ func main() {
 	reservationRepository := infra.NewReservationRepository(db)
 	adminController := controller.NewAdminController(adminRepository)
 	scheduleController := controller.NewScheduleController(scheduleRepository, adminRepository)
-	reservationController := controller.NewReservationController(reservationRepository)
+	reservationController := controller.NewReservationController(reservationRepository, scheduleRepository)
 
 	e := echo.New()
 

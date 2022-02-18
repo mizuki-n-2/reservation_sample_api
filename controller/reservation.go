@@ -2,9 +2,9 @@ package controller
 
 import (
 	"github.com/labstack/echo/v4"
-	"net/http"
 	"github.com/mizuki-n-2/reservation_sample_api/model"
 	"github.com/mizuki-n-2/reservation_sample_api/repository"
+	"net/http"
 )
 
 type ReservationController interface {
@@ -16,10 +16,11 @@ type ReservationController interface {
 
 type reservationController struct {
 	reservationRepository repository.ReservationRepository
+	scheduleRepository    repository.ScheduleRepository
 }
 
-func NewReservationController(reservationRepository repository.ReservationRepository) ReservationController {
-	return &reservationController{reservationRepository: reservationRepository}
+func NewReservationController(reservationRepository repository.ReservationRepository, scheduleRepository repository.ScheduleRepository) ReservationController {
+	return &reservationController{reservationRepository: reservationRepository, scheduleRepository: scheduleRepository}
 }
 
 type ReservationRequest struct {
@@ -54,6 +55,12 @@ func (rc *reservationController) CreateReservation() echo.HandlerFunc {
 		reservation, err := model.NewReservation(req.Name, req.Email, req.PhoneNumber, req.Address, req.AdultNumber, req.PrimarySchoolChildNumber, req.ChildNumber, req.ScheduleID)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, err.Error())
+		}
+
+		_, err = rc.scheduleRepository.FindByID(req.ScheduleID)
+		// TODO: 適切なエラーハンドリング(スケジュールが存在しない場合)
+		if err != nil {
+			return c.JSON(http.StatusNotFound, err.Error())
 		}
 
 		reservationID, err := rc.reservationRepository.Create(reservation)

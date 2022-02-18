@@ -41,7 +41,7 @@ func (rr *reservationRepository) FindByID(id string) (model.Reservation, error) 
 }
 
 func (rr *reservationRepository) Delete(id string) error {
-	if err := rr.db.Delete(&model.Reservation{}, id).Error; err != nil {
+	if err := rr.db.Where("id = ?", id).Delete(&model.Reservation{}).Error; err != nil {
 		return err
 	}
 

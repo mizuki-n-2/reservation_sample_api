@@ -56,7 +56,7 @@ func (sr *scheduleRepository) FindByID(id string) (model.Schedule, error) {
 }
 
 func (sr *scheduleRepository) Delete(id string) error {
-	if err := sr.db.Delete(&model.Schedule{}, id).Error; err != nil {
+	if err := sr.db.Where("id = ?", id).Delete(&model.Schedule{}).Error; err != nil {
 		return err
 	}
 

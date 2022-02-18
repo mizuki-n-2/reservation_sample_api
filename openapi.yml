@@ -2,6 +2,8 @@ openapi: 3.0.0
 info:
   title: reservation_sample_api
   version: "1.0"
+servers:
+  - url: http://localhost:8080
 tags:
   - name: admin
     description: 管理者

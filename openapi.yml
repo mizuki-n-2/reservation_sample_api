@@ -1,0 +1,470 @@
+openapi: 3.0.0
+info:
+  title: reservation_sample_api
+  version: "1.0"
+tags:
+  - name: admin
+    description: 管理者
+  - name: reservation
+    description: 予約
+  - name: schedule
+    description: スケジュール
+  - name: auth
+    description: 認証あり
+paths:
+  "/admins":
+    post:
+      summary: 管理者を作成する
+      tags:
+        - "admin"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminRequest"
+      responses:
+        "201":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  admin_id:
+                    type: string
+                    format: uuid
+                required:
+                  - admin_id
+        "400":
+          description: 不正リクエスト
+        "500":
+          description: サーバーエラー
+  "/login":
+    post:
+      summary: ログインする
+      tags:
+        - "admin"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                required:
+                  - token
+        "400":
+          description: 不正リクエスト
+        "404":
+          description: Admin Not Found
+        "500":
+          description: サーバーエラー
+  "/reservations":
+    get:
+      summary: 予約を全件取得する
+      tags:
+        - "reservation"
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReservationsResponse"
+        "500":
+          description: サーバーエラー
+    post:
+      summary: 予約を作成する
+      tags:
+        - "reservation"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReservationRequest"
+      responses:
+        "201":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reservation_id:
+                    type: string
+                    format: uuid
+                required:
+                  - reservation_id
+        "400":
+          description: 不正リクエスト
+        "404":
+          description: Schedule Not Found
+        "500":
+          description: サーバーエラー
+  "/reservations/{id}":
+    get:
+      summary: 予約を一件取得する
+      tags:
+        - "reservation"
+      parameters:
+        - in: path
+          name: id
+          description: 予約ID
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReservationResponse"
+        "404":
+          description: Reservation Not Found
+        "500":
+          description: サーバーエラー
+    delete:
+      summary: 予約を削除する
+      tags:
+        - "reservation"
+      parameters:
+        - in: path
+          name: id
+          description: 予約ID
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: 成功
+        "404":
+          description: Reservation Not Found
+        "500":
+          description: サーバーエラー
+  "/schedules":
+    get:
+      summary: 予約可能スケジュールを全件取得する
+      tags:
+        - "schedule"
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SchedulesResponse"
+        "500":
+          description: サーバーエラー
+  "/schedules/{id}":
+    get:
+      summary: 予約可能スケジュールを一件取得する
+      tags:
+        - "schedule"
+      parameters:
+        - in: path
+          name: id
+          description: スケジュールID
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScheduleResponse"
+        "404":
+          description: Schedule Not Found
+        "500":
+          description: サーバーエラー
+  "/admin/schedules":
+    post:
+      summary: 予約可能スケジュールを作成する
+      tags:
+        - "schedule"
+        - "auth"
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ScheduleRequest"
+      responses:
+        "201":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  schedule_id:
+                    type: string
+                    format: uuid
+                required:
+                  - schedule_id
+        "401":
+          description: Unauthorized
+        "400":
+          description: 不正リクエスト
+        "500":
+          description: サーバーエラー
+  "/admin/schedules/{id}":
+    patch:
+      summary: 予約可能スケジュールの上限を更新する
+      tags:
+        - "schedule"
+        - "auth"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          description: スケジュールID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                max_number:
+                  type: integer
+              required:
+                - max_number
+      responses:
+        "204":
+          description: 成功
+        "401":
+          description: Unauthorized
+        "404":
+          description: Schedule Not Found
+        "500":
+          description: サーバーエラー
+    delete:
+      summary: 予約可能スケジュールを削除する
+      tags:
+        - "schedule"
+        - "auth"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          description: スケジュールID
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: 成功
+        "401":
+          description: Unauthorized
+        "404":
+          description: Schedule Not Found
+        "500":
+          description: サーバーエラー
+
+components:
+  schemas:
+    AdminRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+      required:
+        - name
+        - email
+        - password
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+      required:
+        - email
+        - password
+    AdminResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - email
+        - password
+        - created_at
+        - updated_at
+    ReservationRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        phone_number:
+          type: string
+        address:
+          type: string
+        adult_number:
+          type: integer
+        primary_school_child_number:
+          type: integer
+        child_number:
+          type: integer
+        schedule_id:
+          type: string
+          format: uuid
+      required:
+        - name
+        - email
+        - phone_number
+        - address
+        - adult_number
+        - primary_school_child_number
+        - child_number
+        - schedule_id
+    ReservationResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        phone_number:
+          type: string
+        address:
+          type: string
+        adult_number:
+          type: integer
+        primary_school_child_number:
+          type: integer
+        child_number:
+          type: integer
+        search_id:
+          type: string
+          format: uuid
+        schedule_id:
+          type: string
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - email
+        - phone_number
+        - address
+        - adult_number
+        - primary_school_child_number
+        - child_number
+        - search_id
+        - schedule_id
+        - created_at
+        - updated_at
+    ReservationsResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/ReservationResponse"
+    ScheduleRequest:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        start_time:
+          type: string
+        max_number:
+          type: integer
+      required:
+        - date
+        - start_time
+        - max_number
+    ScheduleResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        date:
+          type: string
+          format: date
+        start_time:
+          type: string
+        max_number:
+          type: integer
+        reservation_number:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - id
+        - date
+        - start_time
+        - max_number
+        - reservation_number
+        - created_at
+        - updated_at
+    SchedulesResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/ScheduleResponse"
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: []

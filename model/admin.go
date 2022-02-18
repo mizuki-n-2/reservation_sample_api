@@ -1,6 +1,8 @@
 package model
 
 import (
+	"fmt"
+	"unicode/utf8"
 	"os"
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
@@ -18,17 +20,38 @@ type Admin struct {
 }
 
 func NewAdmin(name, email, password string) (*Admin, error) {
-	// TODO: 作成時のバリデーション(name, email, password)
+	newPassword, err := NewPassword(password)
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO: 作成時のバリデーション(name, email)
 	admin := &Admin{
 		ID:        uuid.NewString(),
 		Name:      name,
 		Email:     email,
-		Password:  password,
+		Password:  newPassword,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}
 
 	return admin, nil
+}
+
+func NewPassword(value string) (string, error) {
+	MIN_LENGTH_USER_PASSWORD := 8
+	MAX_LENGTH_USER_PASSWORD := 30
+
+	if utf8.RuneCountInString(value) < MIN_LENGTH_USER_PASSWORD || utf8.RuneCountInString(value) > MAX_LENGTH_USER_PASSWORD {
+		return "", fmt.Errorf("passwordは%d文字以上%d文字以下にしてください", MIN_LENGTH_USER_PASSWORD, MAX_LENGTH_USER_PASSWORD)
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(value), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
+	}
+
+	return string(hashedPassword), nil
 }
 
 type MyCustomClaims struct {

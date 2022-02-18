@@ -35,24 +35,58 @@ type ReservationRequest struct {
 
 func (rc *reservationController) GetReservations() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		// TODO
+		reservations, err := rc.reservationRepository.FindAll()
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, err.Error())
+		}
+
+		return c.JSON(http.StatusOK, reservations)
 	}
 }
 
 func (rc *reservationController) CreateReservation() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		// TODO	
+		var req ReservationRequest
+		if err := c.Bind(&req); err != nil {
+			return c.JSON(http.StatusBadRequest, err.Error())
+		}
+
+		reservation, err := model.NewReservation(req.Name, req.Email, req.PhoneNumber, req.Address, req.AdultNumber, req.PrimarySchoolChildNumber, req.ChildNumber, req.ScheduleID)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, err.Error())
+		}
+
+		reservationID, err := rc.reservationRepository.Create(reservation)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, err.Error())
+		}
+
+		res := map[string]string{
+			"reservation_id": reservationID,
+		}
+
+		return c.JSON(http.StatusCreated, res)
 	}
 }
 
 func (rc *reservationController) GetReservation() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		// TODO
+		reservation, err := rc.reservationRepository.FindByID(c.Param("id"))
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, err.Error())
+		}
+
+		return c.JSON(http.StatusOK, reservation)
 	}
 }
 
 func (rc *reservationController) DeleteReservation() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		// TODO
+		err := rc.reservationRepository.Delete(c.Param("id"))
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, err.Error())
+		}
+
+		return c.JSON(http.StatusNoContent, nil)
 	}
 }

@@ -5,8 +5,9 @@ import (
 )
 
 type ScheduleRepository interface {
-	Store(schedule *model.Schedule) (string, error)
+	Create(schedule *model.Schedule) (string, error)
 	FindAll() ([]model.Schedule, error)
 	FindByID(id string) (model.Schedule, error)
+	Update(schedule *model.Schedule) error
 	Delete(id string) error
 }

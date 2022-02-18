@@ -2,6 +2,7 @@ package model
 
 import (
 	"time"
+	"github.com/google/uuid"
 )
 
 type Reservation struct {
@@ -17,4 +18,24 @@ type Reservation struct {
 	ScheduleID               string    `json:"schedule_id"`
 	CreatedAt                time.Time `json:"created_at"`
 	UpdatedAt                time.Time `json:"updated_at"`
+}
+
+func NewReservation(name, email, phoneNumber, address string, adultNumber, primarySchoolChildNumber, childNumber int, scheduleID string) (*Reservation, error) {
+	// TODO: 作成時の(引数の)バリデーション
+	reservation := &Reservation{
+		ID:        uuid.NewString(),
+		Name:      name,
+		Email:     email,
+		PhoneNumber: phoneNumber,
+		Address:   address,
+		AdultNumber: adultNumber,
+		PrimarySchoolChildNumber: primarySchoolChildNumber,
+		ChildNumber: childNumber,
+		SearchID: uuid.NewString(),
+		ScheduleID: scheduleID,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}
+
+	return reservation, nil
 }

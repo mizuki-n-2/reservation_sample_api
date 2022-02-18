@@ -33,31 +33,90 @@ type ScheduleRequest struct {
 
 func (sc *scheduleController) GetSchedules() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		// TODO
+		// adminID := getAdminIDFromToken(c)
+		schedules, err := sc.scheduleRepository.FindAll()
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, err.Error())
+		}
+
+		return c.JSON(http.StatusOK, schedules)
 	}
 }
 
 func (sc *scheduleController) GetSchedule() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		// TODO
+		// adminID := getAdminIDFromToken(c)
+		schedule, err := sc.scheduleRepository.FindByID(c.Param("id"))
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, err.Error())
+		}
+
+		return c.JSON(http.StatusOK, schedule)
 	}
 }
 
 func (sc *scheduleController) CreateSchedule() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		// TODO
+		var req ScheduleRequest
+		if err := c.Bind(&req); err != nil {
+			return c.JSON(http.StatusBadRequest, err.Error())
+		}
+
+		schedule, err := model.NewSchedule(req.Date, req.StartTime, req.MaxNumber)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, err.Error())
+		}
+
+		scheduleID, err := sc.scheduleRepository.Create(schedule)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, err.Error())
+		}
+
+		res := map[string]string{
+			"schedule_id": scheduleID,
+		}
+
+		return c.JSON(http.StatusOK, res)
 	}
 }
 
 func (sc *scheduleController) UpdateSchedule() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		// TODO
+		// adminID := getAdminIDFromToken(c)
+		var req ScheduleRequest
+		if err := c.Bind(&req); err != nil {
+			return c.JSON(http.StatusBadRequest, err.Error())
+		}
+
+		schedule, err := sc.scheduleRepository.FindByID(c.Param("id"))
+		if err != nil {
+			return c.JSON(http.StatusNotFound, err.Error())
+		}
+
+		err = sc.scheduleRepository.Update(&schedule)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, err.Error())
+		}
+
+		return c.JSON(http.StatusNoContent, nil)
 	}
 }
 
 func (sc *scheduleController) DeleteSchedule() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		// TODO
+		// adminID := getAdminIDFromToken(c)
+		id := c.Param("id")
+		_, err := sc.scheduleRepository.FindByID(id)
+		if err != nil {
+			return c.JSON(http.StatusNotFound, err.Error())
+		}
+
+		err = sc.scheduleRepository.Delete(id)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, err.Error())
+		}
+
+		return c.JSON(http.StatusNoContent, nil)
 	}
 }
 

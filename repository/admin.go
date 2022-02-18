@@ -5,7 +5,7 @@ import (
 )
 
 type AdminRepository interface {
-	Store(admin *model.Admin) (string, error)
+	Create(admin *model.Admin) (string, error)
 	FindByID(id string) (model.Admin, error)
 	FindByEmail(email string) (model.Admin, error)
 }

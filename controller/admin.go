@@ -35,6 +35,9 @@ func (ac *adminController) Login() echo.HandlerFunc {
 		}
 
 		admin, err := ac.adminRepository.FindByEmail(req.Email)
+		if err != nil {
+			return c.JSON(http.StatusNotFound, err.Error())
+		}
 
 		token, err := admin.Authenticate(req.Password)
 		// TODO: エラーハンドリング(パスワードが違う場合とその他で分ける)
@@ -58,8 +61,11 @@ func (ac *adminController) CreateAdmin() echo.HandlerFunc {
 		}
 
 		admin, err := model.NewAdmin(req.Name, req.Email, req.Password)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, err.Error())
+		}
 
-		createdAdminID, err := ac.adminRepository.Store(admin)
+		createdAdminID, err := ac.adminRepository.Create(admin)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, err.Error())
 		}

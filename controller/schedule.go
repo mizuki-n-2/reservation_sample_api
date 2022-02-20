@@ -34,13 +34,13 @@ type ScheduleRequest struct {
 }
 
 type ScheduleResponse struct {
-	ID                string    `json:"id"`
-	Date              string    `json:"date"`
-	StartTime         string    `json:"start_time"`
-	ReservationNumber int       `json:"reservation_number"`
-	MaxNumber         int       `json:"max_number"`
-	CreatedAt         time.Time `json:"created_at"`
-	UpdatedAt         time.Time `json:"updated_at"`
+	ID                string          `json:"id"`
+	Date              model.Date      `json:"date"`
+	StartTime         model.StartTime `json:"start_time"`
+	ReservationNumber int             `json:"reservation_number"`
+	MaxNumber         model.MaxNumber `json:"max_number"`
+	CreatedAt         time.Time       `json:"created_at"`
+	UpdatedAt         time.Time       `json:"updated_at"`
 }
 
 func (sc *scheduleController) GetSchedules() echo.HandlerFunc {
@@ -69,9 +69,10 @@ func (sc *scheduleController) GetSchedules() echo.HandlerFunc {
 
 func (sc *scheduleController) GetSchedule() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		schedule, err := sc.scheduleRepository.FindByID(c.Param("id"))
+		id := c.Param("id")
+		schedule, err := sc.scheduleRepository.FindByID(id)
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, err.Error())
+			return c.JSON(http.StatusNotFound, err.Error())
 		}
 
 		res := ScheduleResponse{
@@ -105,13 +106,13 @@ func (sc *scheduleController) CreateSchedule() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, err.Error())
 		}
 
-		scheduleID, err := sc.scheduleRepository.Create(schedule)
+		createdScheduleID, err := sc.scheduleRepository.Create(schedule)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, err.Error())
 		}
 
 		res := map[string]string{
-			"schedule_id": scheduleID,
+			"schedule_id": createdScheduleID,
 		}
 
 		return c.JSON(http.StatusOK, res)
@@ -130,13 +131,16 @@ func (sc *scheduleController) UpdateSchedule() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, err.Error())
 		}
 
-		schedule, err := sc.scheduleRepository.FindByID(c.Param("id"))
+		id := c.Param("id")
+		schedule, err := sc.scheduleRepository.FindByID(id)
 		if err != nil {
 			return c.JSON(http.StatusNotFound, err.Error())
 		}
 
-		// TODO: maxNumberのバリデーション
-		schedule.MaxNumber = req.MaxNumber
+		err = schedule.UpdateMaxNumber(req.MaxNumber)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, err.Error())
+		}
 
 		err = sc.scheduleRepository.Update(&schedule)
 		if err != nil {
@@ -155,12 +159,12 @@ func (sc *scheduleController) DeleteSchedule() echo.HandlerFunc {
 		}
 
 		id := c.Param("id")
-		_, err = sc.scheduleRepository.FindByID(id)
+		schedule, err := sc.scheduleRepository.FindByID(id)
 		if err != nil {
 			return c.JSON(http.StatusNotFound, err.Error())
 		}
 
-		err = sc.scheduleRepository.Delete(id)
+		err = sc.scheduleRepository.Delete(schedule.ID)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, err.Error())
 		}

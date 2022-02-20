@@ -71,7 +71,7 @@ func (ac *adminController) CreateAdmin() echo.HandlerFunc {
 		}
 
 		res := map[string]string{
-			"id": createdAdminID,
+			"admin_id": createdAdminID,
 		}
 
 		return c.JSON(http.StatusCreated, res)

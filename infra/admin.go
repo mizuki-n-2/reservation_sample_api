@@ -33,7 +33,7 @@ func (ar *adminRepository) FindByID(id string) (model.Admin, error) {
 
 func (ar *adminRepository) FindByEmail(email string) (model.Admin, error) {
 	var admin model.Admin
-	if err := ar.db.Find(&admin, model.Admin{Email: email}).Error; err != nil {
+	if err := ar.db.Where("email = ?", email).First(&admin).Error; err != nil {
 		return model.Admin{}, err
 	}
 

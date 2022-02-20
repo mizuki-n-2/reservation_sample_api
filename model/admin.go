@@ -2,21 +2,21 @@ package model
 
 import (
 	"errors"
-	"regexp"
 	"fmt"
-	"unicode/utf8"
-	"os"
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
-	"time"
 	"golang.org/x/crypto/bcrypt"
+	"os"
+	"regexp"
+	"time"
+	"unicode/utf8"
 )
 
 type Admin struct {
 	ID        string    `json:"id"`
-	Name      string    `json:"name"`
-	Email     string    `json:"email"`
-	Password  string    `json:"password"`
+	Name      Name      `json:"name"`
+	Email     Email     `json:"email"`
+	Password  Password  `json:"password"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
@@ -31,7 +31,7 @@ func NewAdmin(name, email, password string) (*Admin, error) {
 	if err != nil {
 		return nil, err
 	}
-	
+
 	newPassword, err := NewPassword(password)
 	if err != nil {
 		return nil, err
@@ -49,7 +49,9 @@ func NewAdmin(name, email, password string) (*Admin, error) {
 	return admin, nil
 }
 
-func NewName(value string) (string, error) {
+type Name string
+
+func NewName(value string) (Name, error) {
 	MIN_LENGTH_USER_NAME := 2
 	MAX_LENGTH_USER_NAME := 20
 
@@ -57,20 +59,24 @@ func NewName(value string) (string, error) {
 		return "", fmt.Errorf("nameは%d文字以上%d文字以下にしてください", MIN_LENGTH_USER_NAME, MAX_LENGTH_USER_NAME)
 	}
 
-	return value, nil
+	return Name(value), nil
 }
 
-func NewEmail(value string) (string, error) {
+type Email string
+
+func NewEmail(value string) (Email, error) {
 	EMAIL_PATTERN := `^[a-zA-Z0-9.!#$%&'*+\/=?^_{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$`
-	
+
 	if !regexp.MustCompile(EMAIL_PATTERN).MatchString(value) {
 		return "", errors.New("emailの形式が正しくありません")
 	}
 
-	return value, nil
+	return Email(value), nil
 }
 
-func NewPassword(value string) (string, error) {
+type Password string
+
+func NewPassword(value string) (Password, error) {
 	MIN_LENGTH_USER_PASSWORD := 8
 	MAX_LENGTH_USER_PASSWORD := 30
 
@@ -83,7 +89,7 @@ func NewPassword(value string) (string, error) {
 		return "", err
 	}
 
-	return string(hashedPassword), nil
+	return Password(hashedPassword), nil
 }
 
 type MyCustomClaims struct {

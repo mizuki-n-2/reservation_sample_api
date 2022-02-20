@@ -63,13 +63,13 @@ func (rc *reservationController) CreateReservation() echo.HandlerFunc {
 			return c.JSON(http.StatusNotFound, err.Error())
 		}
 
-		reservationID, err := rc.reservationRepository.Create(reservation)
+		createdReservationID, err := rc.reservationRepository.Create(reservation)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, err.Error())
 		}
 
 		res := map[string]string{
-			"reservation_id": reservationID,
+			"reservation_id": createdReservationID,
 		}
 
 		return c.JSON(http.StatusCreated, res)
@@ -78,7 +78,8 @@ func (rc *reservationController) CreateReservation() echo.HandlerFunc {
 
 func (rc *reservationController) GetReservation() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		reservation, err := rc.reservationRepository.FindByID(c.Param("id"))
+		id := c.Param("id")
+		reservation, err := rc.reservationRepository.FindByID(id)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, err.Error())
 		}
@@ -89,7 +90,8 @@ func (rc *reservationController) GetReservation() echo.HandlerFunc {
 
 func (rc *reservationController) DeleteReservation() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		err := rc.reservationRepository.Delete(c.Param("id"))
+		id := c.Param("id")
+		err := rc.reservationRepository.Delete(id)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, err.Error())
 		}

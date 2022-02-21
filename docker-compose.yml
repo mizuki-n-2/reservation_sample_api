@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  api:
+    depends_on: 
+      - db
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    volumes:
+      - .:/app
+  db:
+    image: mysql:8.0
+    ports:
+      - 4306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASS}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASS}
+      TZ: ${TZ}
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - db-data:/var/lib/mysql
+  migrate:
+    build: ./db
+    depends_on:
+      - db
+    command: ["up"]
+    environment:
+      WAIT_HOSTS: ${DB_HOST}:${DB_PORT}
+      MIGRATIONS_DIR: /migrations
+      MYSQL_HOST: ${DB_HOST}
+      MYSQL_PORT: ${DB_PORT}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASS}
+    volumes:
+      - ./db/migrations:/migrations
+      
+volumes:
+  db-data:
+    driver: local

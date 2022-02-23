@@ -1,0 +1,12 @@
+build:
+  docker:
+    web: Dockerfile
+    worker:
+      dockerfile: Dockerfile
+      target: builder 
+# release:
+#   image: worker
+#   command:
+#     - migrate -path db/migrations -database ${DATABASE_URL} up
+run:
+  web: /main

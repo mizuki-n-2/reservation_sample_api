@@ -6,11 +6,12 @@ services:
       - db
     build:
       context: .
-      dockerfile: Dockerfile
+      target: builder
     ports:
       - 8080:8080
     volumes:
       - .:/app
+    command: air -c .air.toml
   db:
     image: mysql:8.0
     ports:

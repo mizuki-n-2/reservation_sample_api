@@ -1,6 +1,11 @@
 # syntax=docker/dockerfile:1
 
-FROM golang:1.16-alpine
+FROM golang:1.16-alpine as builder
+
+RUN apk update \
+  && apk add --no-cache git \
+  && go get -u github.com/cosmtrek/air \
+  && chmod +x ${GOPATH}/bin/air
 
 WORKDIR /app
 
@@ -11,8 +16,11 @@ RUN go mod download
 
 COPY . /app
 
-RUN go build -o /reservation_sample_api
+RUN GOOS=linux GOARCH=amd64 go build -o /main
 
-EXPOSE 8080
+FROM alpine:3.9
 
-CMD [ "/reservation_sample_api" ]
+COPY --from=builder /main .
+
+ENV PORT=${PORT}
+ENTRYPOINT ["/main"]

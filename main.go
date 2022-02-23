@@ -36,6 +36,8 @@ func main() {
 		fmt.Printf("読み込み出来ませんでした: %v", err)
 	}
 
+	port := os.Getenv("PORT")
+
 	db := initDB()
 
 	// DI
@@ -69,5 +71,5 @@ func main() {
 	admin.PATCH("/schedules/:id", scheduleController.UpdateSchedule())
 	admin.DELETE("/schedules/:id", scheduleController.DeleteSchedule())
 
-	e.Logger.Fatal(e.Start(":8080"))
+	e.Logger.Fatal(e.Start(":" + port))
 }

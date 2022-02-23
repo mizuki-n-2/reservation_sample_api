@@ -101,21 +101,27 @@ func (sc *scheduleController) CreateSchedule() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, err.Error())
 		}
 
-		schedule, err := model.NewSchedule(req.Date, req.StartTime, req.MaxNumber)
+		newSchedule, err := model.NewSchedule(req.Date, req.StartTime, req.MaxNumber)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, err.Error())
 		}
 
-		createdScheduleID, err := sc.scheduleRepository.Create(schedule)
+		schedule, err := sc.scheduleRepository.Create(newSchedule)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, err.Error())
 		}
 
-		res := map[string]string{
-			"schedule_id": createdScheduleID,
+		res := ScheduleResponse{
+			ID:                schedule.ID,
+			Date:              schedule.Date,
+			StartTime:         schedule.StartTime,
+			ReservationNumber: 0,
+			MaxNumber:         schedule.MaxNumber,
+			CreatedAt:         schedule.CreatedAt,
+			UpdatedAt:         schedule.UpdatedAt,
 		}
 
-		return c.JSON(http.StatusOK, res)
+		return c.JSON(http.StatusCreated, res)
 	}
 }
 
@@ -132,22 +138,32 @@ func (sc *scheduleController) UpdateSchedule() echo.HandlerFunc {
 		}
 
 		id := c.Param("id")
-		schedule, err := sc.scheduleRepository.FindByID(id)
+		oldSchedule, err := sc.scheduleRepository.FindByID(id)
 		if err != nil {
 			return c.JSON(http.StatusNotFound, err.Error())
 		}
 
-		err = schedule.UpdateMaxNumber(req.MaxNumber)
+		err = oldSchedule.UpdateMaxNumber(req.MaxNumber)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, err.Error())
 		}
 
-		err = sc.scheduleRepository.Update(&schedule)
+		schedule, err := sc.scheduleRepository.Update(&oldSchedule)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, err.Error())
 		}
 
-		return c.JSON(http.StatusNoContent, nil)
+		res := ScheduleResponse{
+			ID:                schedule.ID,
+			Date:              schedule.Date,
+			StartTime:         schedule.StartTime,
+			ReservationNumber: len(schedule.Reservations),
+			MaxNumber:         schedule.MaxNumber,
+			CreatedAt:         schedule.CreatedAt,
+			UpdatedAt:         schedule.UpdatedAt,
+		}
+
+		return c.JSON(http.StatusOK, res)
 	}
 }
 

@@ -60,12 +60,12 @@ func (ac *adminController) CreateAdmin() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, err.Error())
 		}
 
-		admin, err := model.NewAdmin(req.Name, req.Email, req.Password)
+		newAdmin, err := model.NewAdmin(req.Name, req.Email, req.Password)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, err.Error())
 		}
 
-		createdAdminID, err := ac.adminRepository.Create(admin)
+		createdAdminID, err := ac.adminRepository.Create(newAdmin)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, err.Error())
 		}

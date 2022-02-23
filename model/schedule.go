@@ -12,7 +12,7 @@ type Schedule struct {
 	Date         Date          `json:"date"`
 	StartTime    StartTime     `json:"start_time"`
 	MaxNumber    MaxNumber     `json:"max_number"`
-	Reservations []Reservation
+	Reservations []Reservation `json:"reservations"`
 	CreatedAt    time.Time     `json:"created_at"`
 	UpdatedAt    time.Time     `json:"updated_at"`
 }

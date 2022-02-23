@@ -5,7 +5,7 @@ import (
 )
 
 type ReservationRepository interface {
-	Create(reservation *model.Reservation) (string, error)
+	Create(reservation *model.Reservation) (model.Reservation, error)
 	FindAll() ([]model.Reservation, error)
 	FindByID(id string) (model.Reservation, error)
 	Delete(id string) error

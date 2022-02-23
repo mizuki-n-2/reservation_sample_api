@@ -14,12 +14,12 @@ func NewReservationRepository(db *gorm.DB) repository.ReservationRepository {
 	return &reservationRepository{db: db}
 }
 
-func (rr *reservationRepository) Create(reservation *model.Reservation) (string, error) {
+func (rr *reservationRepository) Create(reservation *model.Reservation) (model.Reservation, error) {
 	if err := rr.db.Create(reservation).Error; err != nil {
-		return "", err
+		return model.Reservation{}, err
 	}
 
-	return reservation.ID, nil
+	return *reservation, nil
 }
 
 func (rr *reservationRepository) FindAll() ([]model.Reservation, error) {

@@ -52,7 +52,7 @@ func (rc *reservationController) CreateReservation() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, err.Error())
 		}
 
-		reservation, err := model.NewReservation(req.Name, req.Email, req.PhoneNumber, req.Address, req.AdultNumber, req.PrimarySchoolChildNumber, req.ChildNumber, req.ScheduleID)
+		newReservation, err := model.NewReservation(req.Name, req.Email, req.PhoneNumber, req.Address, req.AdultNumber, req.PrimarySchoolChildNumber, req.ChildNumber, req.ScheduleID)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, err.Error())
 		}
@@ -63,16 +63,12 @@ func (rc *reservationController) CreateReservation() echo.HandlerFunc {
 			return c.JSON(http.StatusNotFound, err.Error())
 		}
 
-		createdReservationID, err := rc.reservationRepository.Create(reservation)
+		reservation, err := rc.reservationRepository.Create(newReservation)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, err.Error())
 		}
 
-		res := map[string]string{
-			"reservation_id": createdReservationID,
-		}
-
-		return c.JSON(http.StatusCreated, res)
+		return c.JSON(http.StatusCreated, reservation)
 	}
 }
 

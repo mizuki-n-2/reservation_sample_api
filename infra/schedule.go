@@ -14,20 +14,20 @@ func NewScheduleRepository(db *gorm.DB) repository.ScheduleRepository {
 	return &scheduleRepository{db: db}
 }
 
-func (sr *scheduleRepository) Create(schedule *model.Schedule) (string, error) {
+func (sr *scheduleRepository) Create(schedule *model.Schedule) (model.Schedule, error) {
 	if err := sr.db.Create(schedule).Error; err != nil {
-		return "", err
+		return model.Schedule{}, err
 	}
 
-	return schedule.ID, nil
+	return *schedule, nil
 }
 
-func (sr *scheduleRepository) Update(schedule *model.Schedule) error {
+func (sr *scheduleRepository) Update(schedule *model.Schedule) (model.Schedule, error) {
 	if err := sr.db.Save(schedule).Error; err != nil {
-		return err
+		return model.Schedule{}, err
 	}
 
-	return nil
+	return *schedule, nil
 }
 
 func (sr *scheduleRepository) FindAll() ([]model.Schedule, error) {

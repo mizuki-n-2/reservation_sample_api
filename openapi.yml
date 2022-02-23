@@ -4,6 +4,7 @@ info:
   version: "1.0"
 servers:
   - url: http://localhost:8080
+  - url: https://reservation-sample-api.herokuapp.com
 tags:
   - name: admin
     description: 管理者

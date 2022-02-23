@@ -5,7 +5,7 @@ FROM golang:1.16-alpine as builder
 RUN apk update \
   && apk add --no-cache git curl \
   && go get -u github.com/cosmtrek/air \
-  && chmod +x ${GOPATH}/bin/air
+  && go install -tags 'mysql' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 
 WORKDIR /app
 

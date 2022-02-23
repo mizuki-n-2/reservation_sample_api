@@ -3,7 +3,7 @@
 FROM golang:1.16-alpine as builder
 
 RUN apk update \
-  && apk add --no-cache git \
+  && apk add --no-cache git curl \
   && go get -u github.com/cosmtrek/air \
   && chmod +x ${GOPATH}/bin/air
 

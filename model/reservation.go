@@ -79,7 +79,7 @@ func NewReservation(name, email, phoneNumber, address string, adultNumber, prima
 type PhoneNumber string
 
 func NewPhoneNumber(value string) (PhoneNumber, error) {
-	PHONE_NUMBER_PATTERN := `^0\d{9,10}$`
+	PHONE_NUMBER_PATTERN := `^0\d{1,3}-\d{1,4}-\d{3,4}$`
 
 	if !regexp.MustCompile(PHONE_NUMBER_PATTERN).MatchString(value) {
 		return "", fmt.Errorf("電話番号の形式が正しくありません")

@@ -3,7 +3,7 @@
 
 https://reservation-sample-api.herokuapp.com/
 
-## setup
+## etup
 
 ```bash
 $ docker compose build

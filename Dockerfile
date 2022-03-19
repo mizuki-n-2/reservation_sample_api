@@ -9,6 +9,9 @@ RUN apk update \
 
 WORKDIR /app
 
+RUN go get github.com/google/wire/cmd/wire \
+  && wire /app/di/wire.go
+
 COPY go.mod ./
 COPY go.sum ./
 

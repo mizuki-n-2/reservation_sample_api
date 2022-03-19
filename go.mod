@@ -5,6 +5,7 @@ go 1.17
 require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/uuid v1.3.0
+	github.com/google/wire v0.5.0
 	github.com/joho/godotenv v1.4.0
 	github.com/labstack/echo/v4 v4.6.3
 	golang.org/x/crypto v0.0.0-20220210151621-f4118a5b28e2

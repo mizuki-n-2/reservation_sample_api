@@ -14,24 +14,24 @@ import (
 
 // Injectors from wire.go:
 
-func InitDI(db *gorm.DB) *DIContainer {
+func InitDI(db *gorm.DB) *Controllers {
 	adminRepository := infra.NewAdminRepository(db)
 	adminController := controller.NewAdminController(adminRepository)
 	scheduleRepository := infra.NewScheduleRepository(db)
 	scheduleController := controller.NewScheduleController(scheduleRepository, adminRepository)
 	reservationRepository := infra.NewReservationRepository(db)
 	reservationController := controller.NewReservationController(reservationRepository, scheduleRepository)
-	diContainer := &DIContainer{
+	controllers := &Controllers{
 		AdminController:       adminController,
 		ScheduleController:    scheduleController,
 		ReservationController: reservationController,
 	}
-	return diContainer
+	return controllers
 }
 
 // wire.go:
 
-type DIContainer struct {
+type Controllers struct {
 	AdminController       controller.AdminController
 	ScheduleController    controller.ScheduleController
 	ReservationController controller.ReservationController

@@ -9,13 +9,13 @@ import (
 	"gorm.io/gorm"
 )
 
-type DIContainer struct {
+type Controllers struct {
 	AdminController       controller.AdminController
 	ScheduleController    controller.ScheduleController
 	ReservationController controller.ReservationController
 }
 
-func InitDI(db *gorm.DB) *DIContainer {
+func InitDI(db *gorm.DB) *Controllers {
 	wire.Build(
 		infra.NewAdminRepository,
 		infra.NewScheduleRepository,
@@ -23,7 +23,7 @@ func InitDI(db *gorm.DB) *DIContainer {
 		controller.NewAdminController,
 		controller.NewScheduleController,
 		controller.NewReservationController,
-		wire.Struct(new(DIContainer), "*"),
+		wire.Struct(new(Controllers), "*"),
 	)
-	return &DIContainer{}
+	return &Controllers{}
 }

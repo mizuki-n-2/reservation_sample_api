@@ -51,10 +51,12 @@ func NewAdmin(name, email, password string) (*Admin, error) {
 
 type Name string
 
-func NewName(value string) (Name, error) {
-	MIN_LENGTH_USER_NAME := 2
-	MAX_LENGTH_USER_NAME := 20
+var (
+	MIN_LENGTH_USER_NAME = 2
+	MAX_LENGTH_USER_NAME = 20
+)
 
+func NewName(value string) (Name, error) {
 	if utf8.RuneCountInString(value) < MIN_LENGTH_USER_NAME || utf8.RuneCountInString(value) > MAX_LENGTH_USER_NAME {
 		return "", fmt.Errorf("nameは%d文字以上%d文字以下にしてください", MIN_LENGTH_USER_NAME, MAX_LENGTH_USER_NAME)
 	}
@@ -64,9 +66,11 @@ func NewName(value string) (Name, error) {
 
 type Email string
 
-func NewEmail(value string) (Email, error) {
-	EMAIL_PATTERN := `^[a-zA-Z0-9.!#$%&'*+\/=?^_{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$`
+var (
+	EMAIL_PATTERN = `^[a-zA-Z0-9.!#$%&'*+\/=?^_{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$`
+)
 
+func NewEmail(value string) (Email, error) {
 	if !regexp.MustCompile(EMAIL_PATTERN).MatchString(value) {
 		return "", errors.New("emailの形式が正しくありません")
 	}
@@ -76,10 +80,12 @@ func NewEmail(value string) (Email, error) {
 
 type Password string
 
-func NewPassword(value string) (Password, error) {
-	MIN_LENGTH_USER_PASSWORD := 8
-	MAX_LENGTH_USER_PASSWORD := 30
+var (
+	MIN_LENGTH_USER_PASSWORD = 8
+	MAX_LENGTH_USER_PASSWORD = 30
+)
 
+func NewPassword(value string) (Password, error) {
 	if utf8.RuneCountInString(value) < MIN_LENGTH_USER_PASSWORD || utf8.RuneCountInString(value) > MAX_LENGTH_USER_PASSWORD {
 		return "", fmt.Errorf("passwordは%d文字以上%d文字以下にしてください", MIN_LENGTH_USER_PASSWORD, MAX_LENGTH_USER_PASSWORD)
 	}

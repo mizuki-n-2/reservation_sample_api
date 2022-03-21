@@ -65,13 +65,12 @@ func (ac *adminController) CreateAdmin() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, err.Error())
 		}
 
-		createdAdminID, err := ac.adminRepository.Create(newAdmin)
-		if err != nil {
+		if err = ac.adminRepository.Create(newAdmin); err != nil {
 			return c.JSON(http.StatusInternalServerError, err.Error())
 		}
 
 		res := map[string]string{
-			"admin_id": createdAdminID,
+			"admin_id": newAdmin.ID,
 		}
 
 		return c.JSON(http.StatusCreated, res)

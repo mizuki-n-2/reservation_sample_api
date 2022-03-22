@@ -30,8 +30,8 @@ func TestSchedule_GetSchedules(t *testing.T) {
 					},
 				},
 				MaxNumber: 10,
-				CreatedAt: time.Date(2022, 1, 1, 0, 0, 0, 0, time.Local),
-				UpdatedAt: time.Date(2022, 1, 1, 0, 0, 0, 0, time.Local),
+				CreatedAt: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC),
+				UpdatedAt: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC),
 			},
 			{
 				ID:           "schedule-id-2",
@@ -39,8 +39,8 @@ func TestSchedule_GetSchedules(t *testing.T) {
 				StartTime:    "09:00",
 				Reservations: []model.Reservation{},
 				MaxNumber:    15,
-				CreatedAt:    time.Date(2022, 12, 1, 0, 0, 0, 0, time.Local),
-				UpdatedAt:    time.Date(2022, 12, 1, 0, 0, 0, 0, time.Local),
+				CreatedAt:    time.Date(2022, 12, 1, 0, 0, 0, 0, time.UTC),
+				UpdatedAt:    time.Date(2022, 12, 1, 0, 0, 0, 0, time.UTC),
 			},
 		}
 		expected = []controller.ScheduleResponse{
@@ -50,8 +50,8 @@ func TestSchedule_GetSchedules(t *testing.T) {
 				StartTime:         "10:00",
 				ReservationNumber: 1,
 				MaxNumber:         10,
-				CreatedAt:         time.Date(2022, 1, 1, 0, 0, 0, 0, time.Local),
-				UpdatedAt:         time.Date(2022, 1, 1, 0, 0, 0, 0, time.Local),
+				CreatedAt:         time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC),
+				UpdatedAt:         time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC),
 			},
 			{
 				ID:                "schedule-id-2",
@@ -59,8 +59,8 @@ func TestSchedule_GetSchedules(t *testing.T) {
 				StartTime:         "09:00",
 				ReservationNumber: 0,
 				MaxNumber:         15,
-				CreatedAt:         time.Date(2022, 12, 1, 0, 0, 0, 0, time.Local),
-				UpdatedAt:         time.Date(2022, 12, 1, 0, 0, 0, 0, time.Local),
+				CreatedAt:         time.Date(2022, 12, 1, 0, 0, 0, 0, time.UTC),
+				UpdatedAt:         time.Date(2022, 12, 1, 0, 0, 0, 0, time.UTC),
 			},
 		}
 	)
@@ -104,8 +104,8 @@ func TestSchedule_GetSchedule(t *testing.T) {
 				},
 			},
 			MaxNumber: 10,
-			CreatedAt: time.Date(2022, 1, 1, 0, 0, 0, 0, time.Local),
-			UpdatedAt: time.Date(2022, 1, 1, 0, 0, 0, 0, time.Local),
+			CreatedAt: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC),
+			UpdatedAt: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC),
 		}
 		expected = controller.ScheduleResponse{
 			ID:                "schedule-id-1",
@@ -113,8 +113,8 @@ func TestSchedule_GetSchedule(t *testing.T) {
 			StartTime:         "10:00",
 			ReservationNumber: 1,
 			MaxNumber:         10,
-			CreatedAt:         time.Date(2022, 1, 1, 0, 0, 0, 0, time.Local),
-			UpdatedAt:         time.Date(2022, 1, 1, 0, 0, 0, 0, time.Local),
+			CreatedAt:         time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC),
+			UpdatedAt:         time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC),
 		}
 	)
 

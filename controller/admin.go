@@ -27,6 +27,14 @@ type AdminRequest struct {
 	Password string `json:"password"`
 }
 
+type LoginResponse struct {
+	Token string `json:"token"`
+}
+
+type AdminID struct {
+	AdminID string `json:"admin_id"`
+}
+
 func (ac *adminController) Login() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var req AdminRequest
@@ -45,8 +53,8 @@ func (ac *adminController) Login() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, err.Error())
 		}
 
-		res := map[string]string{
-			"token": token,
+		res := LoginResponse{
+			Token: token,
 		}
 
 		return c.JSON(http.StatusOK, res)
@@ -65,13 +73,12 @@ func (ac *adminController) CreateAdmin() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, err.Error())
 		}
 
-		createdAdminID, err := ac.adminRepository.Create(newAdmin)
-		if err != nil {
+		if err = ac.adminRepository.Create(newAdmin); err != nil {
 			return c.JSON(http.StatusInternalServerError, err.Error())
 		}
 
-		res := map[string]string{
-			"admin_id": createdAdminID,
+		res := AdminID{
+			AdminID: newAdmin.ID,
 		}
 
 		return c.JSON(http.StatusCreated, res)

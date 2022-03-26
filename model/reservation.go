@@ -78,9 +78,11 @@ func NewReservation(name, email, phoneNumber, address string, adultNumber, prima
 
 type PhoneNumber string
 
-func NewPhoneNumber(value string) (PhoneNumber, error) {
-	PHONE_NUMBER_PATTERN := `^0\d{1,3}-\d{1,4}-\d{3,4}$`
+var (
+	PHONE_NUMBER_PATTERN = `^0\d{1,3}-\d{1,4}-\d{3,4}$`
+)
 
+func NewPhoneNumber(value string) (PhoneNumber, error) {
 	if !regexp.MustCompile(PHONE_NUMBER_PATTERN).MatchString(value) {
 		return "", fmt.Errorf("電話番号の形式が正しくありません")
 	}
@@ -100,12 +102,14 @@ func NewAddress(value string) (Address, error) {
 
 type NumberOfPeople int
 
-func NewNumberOfPeople(value int) (NumberOfPeople, error) {
-	MAX_NUMBER_OF_PEOPLE := 50
-	MIN_NUMBER_OF_PEOPLE := 0
+var (
+	MAX_NUMBER_OF_PEOPLE = 50
+	MIN_NUMBER_OF_PEOPLE = 0
+)
 
+func NewNumberOfPeople(value int) (NumberOfPeople, error) {
 	if value < MIN_NUMBER_OF_PEOPLE || value > MAX_NUMBER_OF_PEOPLE {
-		return 0, fmt.Errorf("人数は%d人以上%d人以下にしてください", MIN_NUMBER_OF_PEOPLE, MAX_NUMBER_OF_PEOPLE)
+		return -1, fmt.Errorf("人数は%d人以上%d人以下にしてください", MIN_NUMBER_OF_PEOPLE, MAX_NUMBER_OF_PEOPLE)
 	}
 
 	return NumberOfPeople(value), nil

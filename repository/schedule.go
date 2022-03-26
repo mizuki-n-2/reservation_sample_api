@@ -1,5 +1,7 @@
 package repository
 
+//go:generate mockgen -source=schedule.go -destination=schedule_mock.go -package=repository
+
 import (
 	"github.com/mizuki-n-2/reservation_sample_api/model"
 )

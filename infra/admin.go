@@ -14,12 +14,12 @@ func NewAdminRepository(db *gorm.DB) repository.AdminRepository {
 	return &adminRepository{db: db}
 }
 
-func (ar *adminRepository) Create(admin *model.Admin) (string, error) {
+func (ar *adminRepository) Create(admin *model.Admin) error {
 	if err := ar.db.Create(admin).Error; err != nil {
-		return "", err
+		return err
 	}
 
-	return admin.ID, nil
+	return nil
 }
 
 func (ar *adminRepository) FindByID(id string) (model.Admin, error) {

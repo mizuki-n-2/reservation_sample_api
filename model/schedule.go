@@ -47,9 +47,11 @@ func NewSchedule(date, startTime string, maxNumber int) (*Schedule, error) {
 
 type Date string
 
-func NewDate(value string) (Date, error) {
-	DATE_PATTERN := `^\d{4}-\d{2}-\d{2}$`
+var (
+	DATE_PATTERN = `^\d{4}-\d{2}-\d{2}$`
+)
 
+func NewDate(value string) (Date, error) {
 	if !regexp.MustCompile(DATE_PATTERN).MatchString(value) {
 		return "", fmt.Errorf("dateの形式が正しくありません")
 	}
@@ -59,9 +61,11 @@ func NewDate(value string) (Date, error) {
 
 type StartTime string
 
-func NewStartTime(value string) (StartTime, error) {
-	START_TIME_PATTERN := `^\d{2}:\d{2}$`
+var (
+	START_TIME_PATTERN = `^\d{2}:\d{2}$`
+)
 
+func NewStartTime(value string) (StartTime, error) {
 	if !regexp.MustCompile(START_TIME_PATTERN).MatchString(value) {
 		return "", fmt.Errorf("start_timeの形式が正しくありません")
 	}
@@ -71,12 +75,14 @@ func NewStartTime(value string) (StartTime, error) {
 
 type MaxNumber int
 
-func NewMaxNumber(value int) (MaxNumber, error) {
-	MAX_MAX_NUMBER := 100
-	MIN_MAX_NUMBER := 1
+var (
+	MAX_MAX_NUMBER = 100
+	MIN_MAX_NUMBER = 1
+)
 
+func NewMaxNumber(value int) (MaxNumber, error) {
 	if value < MIN_MAX_NUMBER || value > MAX_MAX_NUMBER {
-		return 0, fmt.Errorf("max_numberは%d以上%d以下にしてください", MIN_MAX_NUMBER, MAX_MAX_NUMBER)
+		return -1, fmt.Errorf("max_numberは%d以上%d以下にしてください", MIN_MAX_NUMBER, MAX_MAX_NUMBER)
 	}
 
 	return MaxNumber(value), nil

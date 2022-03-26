@@ -9,3 +9,6 @@ cover:
 	go test -cover ./... -coverprofile=coverage/cover.out
 	go tool cover -html=coverage/cover.out -o coverage/cover.html
 	open coverage/cover.html
+	
+lint:
+	golangci-lint run

@@ -37,7 +37,9 @@ func (sr *scheduleRepository) FindAll() ([]model.Schedule, error) {
 	}
 
 	for i := 0; i < len(schedules); i++ {
-		sr.db.Model(&schedules[i]).Association("Reservations").Find(&schedules[i].Reservations)
+		if err := sr.db.Model(&schedules[i]).Association("Reservations").Find(&schedules[i].Reservations); err != nil {
+			return nil, err
+		}
 	}
 
 	return schedules, nil
@@ -49,7 +51,9 @@ func (sr *scheduleRepository) FindByID(id string) (model.Schedule, error) {
 		return model.Schedule{}, err
 	}
 
-	sr.db.Model(&schedule).Association("Reservations").Find(&schedule.Reservations)
+	if err := sr.db.Model(&schedule).Association("Reservations").Find(&schedule.Reservations); err != nil {
+		return model.Schedule{}, err
+	}
 
 	return schedule, nil
 }

@@ -12,6 +12,7 @@ import (
 	"github.com/mizuki-n-2/reservation_sample_api/controller"
 	"github.com/mizuki-n-2/reservation_sample_api/model"
 	"github.com/mizuki-n-2/reservation_sample_api/repository"
+	"github.com/mizuki-n-2/reservation_sample_api/service"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -21,6 +22,7 @@ func TestAdmin_Login(t *testing.T) {
 			Email: "user@example.com",
 			Password: "password123",
 		}
+		token = "created-token"
 	)
 
 	hashedPassword, err := model.NewPassword(request.Password)
@@ -47,10 +49,12 @@ func TestAdmin_Login(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	m := repository.NewMockAdminRepository(ctrl)
-	m.EXPECT().FindByEmail(request.Email).Return(admin, nil)
+	m1 := service.NewMockAuthService(ctrl)
+	m1.EXPECT().CreateToken(admin.ID).Return(token, nil)
+	m2 := repository.NewMockAdminRepository(ctrl)
+	m2.EXPECT().FindByEmail(request.Email).Return(admin, nil)
 	
-	c := controller.NewAdminController(m)
+	c := controller.NewAdminController(m1, m2)
 	if err := c.Login()(context); err != nil {
 		t.Fatal(err)
 	}
@@ -62,8 +66,8 @@ func TestAdmin_Login(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if response.Token == "" {
-		t.Fatal("token not exists")
+	if response.Token != token {
+		t.Fatal("token not match")
 	}
 }
 
@@ -88,10 +92,11 @@ func TestAdmin_CreateAdmin(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	m := repository.NewMockAdminRepository(ctrl)
-	m.EXPECT().Create(gomock.Any()).Return(nil)
+	m1 := service.NewMockAuthService(ctrl)
+	m2 := repository.NewMockAdminRepository(ctrl)
+	m2.EXPECT().Create(gomock.Any()).Return(nil)
 
-	c := controller.NewAdminController(m)
+	c := controller.NewAdminController(m1, m2)
 	if err := c.CreateAdmin()(context); err != nil {
 		t.Fatal(err)
 	}

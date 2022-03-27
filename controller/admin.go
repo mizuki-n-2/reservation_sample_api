@@ -1,11 +1,13 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
 	"github.com/mizuki-n-2/reservation_sample_api/model"
 	"github.com/mizuki-n-2/reservation_sample_api/repository"
+	"github.com/mizuki-n-2/reservation_sample_api/service"
 )
 
 type AdminController interface {
@@ -14,11 +16,14 @@ type AdminController interface {
 }
 
 type adminController struct {
+	authService     service.AuthService
 	adminRepository repository.AdminRepository
 }
 
-func NewAdminController(adminRepository repository.AdminRepository) AdminController {
-	return &adminController{adminRepository: adminRepository}
+func NewAdminController(authService service.AuthService, adminRepository repository.AdminRepository) AdminController {
+	return &adminController{
+		authService: authService, adminRepository: adminRepository,
+	}
 }
 
 type AdminRequest struct {
@@ -47,10 +52,13 @@ func (ac *adminController) Login() echo.HandlerFunc {
 			return c.JSON(http.StatusNotFound, err.Error())
 		}
 
-		token, err := admin.Authenticate(req.Password)
-		// TODO: エラーハンドリング(パスワードが違う場合とその他で分ける)
+		if err = admin.ComparePassword(req.Password); err != nil {
+			return c.JSON(http.StatusBadRequest, fmt.Errorf("パスワードが正しくありません: %w", err))
+		}
+
+		token, err := ac.authService.CreateToken(admin.ID)
 		if err != nil {
-			return c.JSON(http.StatusBadRequest, err.Error())
+			return c.JSON(http.StatusInternalServerError, err.Error())
 		}
 
 		res := LoginResponse{

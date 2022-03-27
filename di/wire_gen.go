@@ -20,7 +20,7 @@ func InitDI(db *gorm.DB) *Controllers {
 	authService := service.NewAuthService(adminRepository)
 	adminController := controller.NewAdminController(authService, adminRepository)
 	scheduleRepository := infra.NewScheduleRepository(db)
-	scheduleController := controller.NewScheduleController(scheduleRepository, adminRepository)
+	scheduleController := controller.NewScheduleController(authService, scheduleRepository)
 	reservationRepository := infra.NewReservationRepository(db)
 	reservationController := controller.NewReservationController(reservationRepository, scheduleRepository)
 	controllers := &Controllers{

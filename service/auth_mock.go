@@ -8,6 +8,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
+	echo "github.com/labstack/echo/v4"
 )
 
 // MockAuthService is a mock of AuthService interface.
@@ -31,6 +32,20 @@ func NewMockAuthService(ctrl *gomock.Controller) *MockAuthService {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockAuthService) EXPECT() *MockAuthServiceMockRecorder {
 	return m.recorder
+}
+
+// CheckAuth mocks base method.
+func (m *MockAuthService) CheckAuth(c echo.Context) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CheckAuth", c)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CheckAuth indicates an expected call of CheckAuth.
+func (mr *MockAuthServiceMockRecorder) CheckAuth(c interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckAuth", reflect.TypeOf((*MockAuthService)(nil).CheckAuth), c)
 }
 
 // CreateToken mocks base method.

@@ -7,10 +7,12 @@ import (
 	"time"
 	"github.com/golang-jwt/jwt"
 	"github.com/mizuki-n-2/reservation_sample_api/repository"
+	"github.com/labstack/echo/v4"
 )
 
 type AuthService interface {
 	CreateToken(adminID string) (string, error)
+	CheckAuth(c echo.Context) error
 }
 
 type authService struct {
@@ -44,4 +46,17 @@ func (as *authService) CreateToken(adminID string) (string, error) {
 	}
 
 	return tokenString, nil
+}
+
+func (as *authService) CheckAuth(c echo.Context) error {
+	user := c.Get("user").(*jwt.Token)
+	claims := user.Claims.(jwt.MapClaims)
+	adminID := claims["admin_id"].(string)
+
+	_, err := as.adminRepository.FindByID(adminID)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

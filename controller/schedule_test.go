@@ -13,6 +13,7 @@ import (
 	"github.com/mizuki-n-2/reservation_sample_api/controller"
 	"github.com/mizuki-n-2/reservation_sample_api/model"
 	"github.com/mizuki-n-2/reservation_sample_api/repository"
+	"github.com/mizuki-n-2/reservation_sample_api/service"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -73,9 +74,9 @@ func TestSchedule_GetSchedules(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	m1 := repository.NewMockScheduleRepository(ctrl)
-	m1.EXPECT().FindAll().Return(schedules, nil)
-	m2 := repository.NewMockAdminRepository(ctrl)
+	m1 := service.NewMockAuthService(ctrl)
+	m2 := repository.NewMockScheduleRepository(ctrl)
+	m2.EXPECT().FindAll().Return(schedules, nil)
 
 	c := controller.NewScheduleController(m1, m2)
 	if err := c.GetSchedules()(context); err != nil {
@@ -128,9 +129,9 @@ func TestSchedule_GetSchedule(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	m1 := repository.NewMockScheduleRepository(ctrl)
-	m1.EXPECT().FindByID(schedule.ID).Return(schedule, nil)
-	m2 := repository.NewMockAdminRepository(ctrl)
+	m1 := service.NewMockAuthService(ctrl)
+	m2 := repository.NewMockScheduleRepository(ctrl)
+	m2.EXPECT().FindByID(schedule.ID).Return(schedule, nil)
 
 	c := controller.NewScheduleController(m1, m2)
 	if err := c.GetSchedule()(context); err != nil {

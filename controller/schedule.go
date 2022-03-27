@@ -186,8 +186,7 @@ func (sc *scheduleController) DeleteSchedule() echo.HandlerFunc {
 			return c.JSON(http.StatusNotFound, err.Error())
 		}
 
-		err = sc.scheduleRepository.Delete(schedule.ID)
-		if err != nil {
+		if err = sc.scheduleRepository.Delete(schedule.ID); err != nil {
 			return c.JSON(http.StatusInternalServerError, err.Error())
 		}
 

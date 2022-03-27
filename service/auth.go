@@ -53,8 +53,7 @@ func (as *authService) CheckAuth(c echo.Context) error {
 	claims := user.Claims.(jwt.MapClaims)
 	adminID := claims["admin_id"].(string)
 
-	_, err := as.adminRepository.FindByID(adminID)
-	if err != nil {
+	if _, err := as.adminRepository.FindByID(adminID); err != nil {
 		return err
 	}
 

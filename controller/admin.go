@@ -56,7 +56,7 @@ func (ac *adminController) Login() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, fmt.Errorf("パスワードが正しくありません: %w", err))
 		}
 
-		token, err := ac.authService.CreateToken(admin.ID)
+		token, err := ac.authService.GenerateToken(admin.ID)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, err.Error())
 		}

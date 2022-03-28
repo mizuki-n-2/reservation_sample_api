@@ -3,16 +3,18 @@ package service
 //go:generate mockgen -source=auth.go -destination=auth_mock.go -package=service
 
 import (
+	"fmt"
 	"os"
 	"time"
+
 	"github.com/golang-jwt/jwt"
-	"github.com/mizuki-n-2/reservation_sample_api/repository"
 	"github.com/labstack/echo/v4"
+	"github.com/mizuki-n-2/reservation_sample_api/repository"
 )
 
 type AuthService interface {
-	CreateToken(adminID string) (string, error)
-	CheckAuth(c echo.Context) error
+	GenerateToken(adminID string) (string, error)
+	ValidateToken(c echo.Context) error
 }
 
 type authService struct {
@@ -23,15 +25,15 @@ func NewAuthService(adminRepository repository.AdminRepository) AuthService {
 	return &authService{adminRepository: adminRepository}
 }
 
-type MyCustomClaims struct {
+type jwtCustomClaims struct {
 	AdminID string `json:"admin_id"`
 	jwt.StandardClaims
 }
 
-func (as *authService) CreateToken(adminID string) (string, error) {
+func (as *authService) GenerateToken(adminID string) (string, error) {
 	signingKey := []byte(os.Getenv("JWT_SIGNING_KEY"))
 
-	claims := MyCustomClaims{
+	claims := &jwtCustomClaims{
 		adminID,
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
@@ -48,11 +50,15 @@ func (as *authService) CreateToken(adminID string) (string, error) {
 	return tokenString, nil
 }
 
-func (as *authService) CheckAuth(c echo.Context) error {
+func (as *authService) ValidateToken(c echo.Context) error {
 	user := c.Get("user").(*jwt.Token)
 	claims := user.Claims.(jwt.MapClaims)
-	adminID := claims["admin_id"].(string)
 
+	if !claims.VerifyExpiresAt(time.Now().Unix(), true) {
+		return fmt.Errorf("トークンの有効期限が切れています")
+	}
+
+	adminID := claims["admin_id"].(string)
 	if _, err := as.adminRepository.FindByID(adminID); err != nil {
 		return err
 	}

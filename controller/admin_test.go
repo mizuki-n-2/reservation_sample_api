@@ -50,7 +50,7 @@ func TestAdmin_Login(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	m1 := service.NewMockAuthService(ctrl)
-	m1.EXPECT().CreateToken(admin.ID).Return(token, nil)
+	m1.EXPECT().GenerateToken(admin.ID).Return(token, nil)
 	m2 := repository.NewMockAdminRepository(ctrl)
 	m2.EXPECT().FindByEmail(request.Email).Return(admin, nil)
 	

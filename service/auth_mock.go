@@ -34,31 +34,31 @@ func (m *MockAuthService) EXPECT() *MockAuthServiceMockRecorder {
 	return m.recorder
 }
 
-// CheckAuth mocks base method.
-func (m *MockAuthService) CheckAuth(c echo.Context) error {
+// GenerateToken mocks base method.
+func (m *MockAuthService) GenerateToken(adminID string) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CheckAuth", c)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// CheckAuth indicates an expected call of CheckAuth.
-func (mr *MockAuthServiceMockRecorder) CheckAuth(c interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckAuth", reflect.TypeOf((*MockAuthService)(nil).CheckAuth), c)
-}
-
-// CreateToken mocks base method.
-func (m *MockAuthService) CreateToken(adminID string) (string, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateToken", adminID)
+	ret := m.ctrl.Call(m, "GenerateToken", adminID)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// CreateToken indicates an expected call of CreateToken.
-func (mr *MockAuthServiceMockRecorder) CreateToken(adminID interface{}) *gomock.Call {
+// GenerateToken indicates an expected call of GenerateToken.
+func (mr *MockAuthServiceMockRecorder) GenerateToken(adminID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateToken", reflect.TypeOf((*MockAuthService)(nil).CreateToken), adminID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateToken", reflect.TypeOf((*MockAuthService)(nil).GenerateToken), adminID)
+}
+
+// ValidateToken mocks base method.
+func (m *MockAuthService) ValidateToken(c echo.Context) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ValidateToken", c)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// ValidateToken indicates an expected call of ValidateToken.
+func (mr *MockAuthServiceMockRecorder) ValidateToken(c interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ValidateToken", reflect.TypeOf((*MockAuthService)(nil).ValidateToken), c)
 }

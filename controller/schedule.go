@@ -97,8 +97,7 @@ func (sc *scheduleController) GetSchedule() echo.HandlerFunc {
 
 func (sc *scheduleController) CreateSchedule() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		err := sc.authService.CheckAuth(c)
-		if err != nil {
+		if err := sc.authService.ValidateToken(c); err != nil {
 			return c.JSON(http.StatusUnauthorized, err.Error())
 		}
 
@@ -133,8 +132,7 @@ func (sc *scheduleController) CreateSchedule() echo.HandlerFunc {
 
 func (sc *scheduleController) UpdateSchedule() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		err := sc.authService.CheckAuth(c)
-		if err != nil {
+		if err := sc.authService.ValidateToken(c); err != nil {
 			return c.JSON(http.StatusUnauthorized, err.Error())
 		}
 
@@ -175,8 +173,7 @@ func (sc *scheduleController) UpdateSchedule() echo.HandlerFunc {
 
 func (sc *scheduleController) DeleteSchedule() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		err := sc.authService.CheckAuth(c)
-		if err != nil {
+		if err := sc.authService.ValidateToken(c); err != nil {
 			return c.JSON(http.StatusUnauthorized, err.Error())
 		}
 

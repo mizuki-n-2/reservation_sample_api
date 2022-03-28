@@ -4,10 +4,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
 	"github.com/mizuki-n-2/reservation_sample_api/model"
 	"github.com/mizuki-n-2/reservation_sample_api/repository"
+	"github.com/mizuki-n-2/reservation_sample_api/service"
 )
 
 type ScheduleController interface {
@@ -19,12 +19,18 @@ type ScheduleController interface {
 }
 
 type scheduleController struct {
+	authService        service.AuthService
 	scheduleRepository repository.ScheduleRepository
-	adminRepository    repository.AdminRepository
 }
 
-func NewScheduleController(scheduleRepository repository.ScheduleRepository, adminRepository repository.AdminRepository) ScheduleController {
-	return &scheduleController{scheduleRepository: scheduleRepository, adminRepository: adminRepository}
+func NewScheduleController(
+	authService service.AuthService,
+	scheduleRepository repository.ScheduleRepository,
+) ScheduleController {
+	return &scheduleController{
+		authService:        authService,
+		scheduleRepository: scheduleRepository,
+	}
 }
 
 type ScheduleRequest struct {
@@ -91,8 +97,7 @@ func (sc *scheduleController) GetSchedule() echo.HandlerFunc {
 
 func (sc *scheduleController) CreateSchedule() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		err := auth(c, sc.adminRepository)
-		if err != nil {
+		if err := sc.authService.ValidateToken(c); err != nil {
 			return c.JSON(http.StatusUnauthorized, err.Error())
 		}
 
@@ -127,8 +132,7 @@ func (sc *scheduleController) CreateSchedule() echo.HandlerFunc {
 
 func (sc *scheduleController) UpdateSchedule() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		err := auth(c, sc.adminRepository)
-		if err != nil {
+		if err := sc.authService.ValidateToken(c); err != nil {
 			return c.JSON(http.StatusUnauthorized, err.Error())
 		}
 
@@ -169,8 +173,7 @@ func (sc *scheduleController) UpdateSchedule() echo.HandlerFunc {
 
 func (sc *scheduleController) DeleteSchedule() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		err := auth(c, sc.adminRepository)
-		if err != nil {
+		if err := sc.authService.ValidateToken(c); err != nil {
 			return c.JSON(http.StatusUnauthorized, err.Error())
 		}
 
@@ -180,24 +183,10 @@ func (sc *scheduleController) DeleteSchedule() echo.HandlerFunc {
 			return c.JSON(http.StatusNotFound, err.Error())
 		}
 
-		err = sc.scheduleRepository.Delete(schedule.ID)
-		if err != nil {
+		if err = sc.scheduleRepository.Delete(schedule.ID); err != nil {
 			return c.JSON(http.StatusInternalServerError, err.Error())
 		}
 
 		return c.JSON(http.StatusNoContent, nil)
 	}
-}
-
-func auth(c echo.Context, adminRepository repository.AdminRepository) error {
-	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	adminID := claims["admin_id"].(string)
-
-	_, err := adminRepository.FindByID(adminID)
-	if err != nil {
-		return c.JSON(http.StatusUnauthorized, "admin_id is invalid")
-	}
-
-	return nil
 }

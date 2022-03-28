@@ -3,10 +3,8 @@ package model
 import (
 	"errors"
 	"fmt"
-	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
-	"os"
 	"regexp"
 	"time"
 	"unicode/utf8"
@@ -98,41 +96,11 @@ func NewPassword(value string) (Password, error) {
 	return Password(hashedPassword), nil
 }
 
-type MyCustomClaims struct {
-	AdminID string `json:"admin_id"`
-	jwt.StandardClaims
-}
-
-func (admin *Admin) Authenticate(password string) (string, error) {
+func (admin *Admin) CheckPassword(password string) error {
 	err := bcrypt.CompareHashAndPassword([]byte(admin.Password), []byte(password))
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	token, err := createToken(admin.ID)
-	if err != nil {
-		return "", err
-	}
-
-	return token, nil
-}
-
-func createToken(adminID string) (string, error) {
-	signingKey := []byte(os.Getenv("JWT_SIGNING_KEY"))
-
-	claims := MyCustomClaims{
-		adminID,
-		jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
-			Issuer:    "reservation_sample",
-		},
-	}
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString(signingKey)
-	if err != nil {
-		return "", err
-	}
-
-	return tokenString, nil
+	return nil
 }

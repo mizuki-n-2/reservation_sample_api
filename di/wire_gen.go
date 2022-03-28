@@ -9,6 +9,7 @@ package di
 import (
 	"github.com/mizuki-n-2/reservation_sample_api/controller"
 	"github.com/mizuki-n-2/reservation_sample_api/infra"
+	"github.com/mizuki-n-2/reservation_sample_api/service"
 	"gorm.io/gorm"
 )
 
@@ -16,9 +17,10 @@ import (
 
 func InitDI(db *gorm.DB) *Controllers {
 	adminRepository := infra.NewAdminRepository(db)
-	adminController := controller.NewAdminController(adminRepository)
+	authService := service.NewAuthService(adminRepository)
+	adminController := controller.NewAdminController(authService, adminRepository)
 	scheduleRepository := infra.NewScheduleRepository(db)
-	scheduleController := controller.NewScheduleController(scheduleRepository, adminRepository)
+	scheduleController := controller.NewScheduleController(authService, scheduleRepository)
 	reservationRepository := infra.NewReservationRepository(db)
 	reservationController := controller.NewReservationController(reservationRepository, scheduleRepository)
 	controllers := &Controllers{

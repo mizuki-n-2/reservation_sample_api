@@ -6,6 +6,7 @@ import (
 	"github.com/google/wire"
 	"github.com/mizuki-n-2/reservation_sample_api/controller"
 	"github.com/mizuki-n-2/reservation_sample_api/infra"
+	"github.com/mizuki-n-2/reservation_sample_api/service"
 	"gorm.io/gorm"
 )
 
@@ -20,6 +21,7 @@ func InitDI(db *gorm.DB) *Controllers {
 		infra.NewAdminRepository,
 		infra.NewScheduleRepository,
 		infra.NewReservationRepository,
+		service.NewAuthService,
 		controller.NewAdminController,
 		controller.NewScheduleController,
 		controller.NewReservationController,

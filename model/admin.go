@@ -96,7 +96,7 @@ func NewPassword(value string) (Password, error) {
 	return Password(hashedPassword), nil
 }
 
-func (admin *Admin) ComparePassword(password string) error {
+func (admin *Admin) CheckPassword(password string) error {
 	err := bcrypt.CompareHashAndPassword([]byte(admin.Password), []byte(password))
 	if err != nil {
 		return err

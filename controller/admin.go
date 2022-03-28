@@ -52,7 +52,7 @@ func (ac *adminController) Login() echo.HandlerFunc {
 			return c.JSON(http.StatusNotFound, err.Error())
 		}
 
-		if err = admin.ComparePassword(req.Password); err != nil {
+		if err = admin.CheckPassword(req.Password); err != nil {
 			return c.JSON(http.StatusBadRequest, fmt.Errorf("パスワードが正しくありません: %w", err))
 		}
 

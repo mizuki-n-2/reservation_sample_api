@@ -14,6 +14,7 @@ import (
 	"github.com/mizuki-n-2/reservation_sample_api/repository"
 	"github.com/mizuki-n-2/reservation_sample_api/service"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 )
 
 func TestAdmin_Login(t *testing.T) {
@@ -94,6 +95,7 @@ func TestAdmin_CreateAdmin(t *testing.T) {
 	defer ctrl.Finish()
 	m1 := service.NewMockAuthService(ctrl)
 	m2 := repository.NewMockAdminRepository(ctrl)
+	m2.EXPECT().FindByEmail(request.Email).Return(model.Admin{}, gorm.ErrRecordNotFound)
 	m2.EXPECT().Create(gomock.Any()).Return(nil)
 
 	c := controller.NewAdminController(m1, m2)

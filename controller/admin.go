@@ -76,6 +76,10 @@ func (ac *adminController) CreateAdmin() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, err.Error())
 		}
 
+		if _, err := ac.adminRepository.FindByEmail(req.Email); err == nil {
+			return c.JSON(http.StatusBadRequest, fmt.Errorf("すでに登録されているメールアドレスです"))
+		}
+
 		newAdmin, err := model.NewAdmin(req.Name, req.Email, req.Password)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, err.Error())

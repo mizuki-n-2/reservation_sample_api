@@ -26,7 +26,7 @@ func NewReservationController(reservationRepository repository.ReservationReposi
 type ReservationRequest struct {
 	Name                     string `json:"name" validate:"required,min=2,max=20"`
 	Email                    string `json:"email" validate:"required,email"`
-	PhoneNumber              string `json:"phone_number" validate:"required,max=14"`
+	PhoneNumber              string `json:"phone_number" validate:"required,phone"`
 	Address                  string `json:"address" validate:"required,max=50"`
 	AdultNumber              int    `json:"adult_number" validate:"gte=0,lte=50"`
 	PrimarySchoolChildNumber int    `json:"primary_school_child_number" validate:"gte=0,lte=50"`

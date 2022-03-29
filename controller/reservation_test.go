@@ -214,7 +214,11 @@ func TestReservation_CreateReservation(t *testing.T) {
 	)
 
 	e := echo.New()
-	e.Validator = &v.CustomValidator{Validator: validator.New()}
+	validate := validator.New()
+	if err := validate.RegisterValidation("phone", v.PhoneValidator); err != nil {
+		t.Fatal(err)
+	}
+	e.Validator = &v.CustomValidator{Validator: validate}
 	requestJSON, err := json.Marshal(request)
 	if err != nil {
 		t.Fatal(err)

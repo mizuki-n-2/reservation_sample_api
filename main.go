@@ -50,7 +50,11 @@ func main() {
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORS())
 
-	e.Validator = &v.CustomValidator{Validator: validator.New()}
+	validate := validator.New()
+	if err = validate.RegisterValidation("phone", v.PhoneValidator); err != nil {
+		panic(err)
+	}
+	e.Validator = &v.CustomValidator{Validator: validate}
 
 	router.NewRouter(e, c)
 

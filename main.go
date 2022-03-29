@@ -10,6 +10,8 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/mizuki-n-2/reservation_sample_api/di"
 	"github.com/mizuki-n-2/reservation_sample_api/router"
+	"github.com/go-playground/validator/v10"
+	v "github.com/mizuki-n-2/reservation_sample_api/validator"
 )
 
 func initDB() *gorm.DB {
@@ -47,6 +49,8 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORS())
+
+	e.Validator = &v.CustomValidator{Validator: validator.New()}
 
 	router.NewRouter(e, c)
 

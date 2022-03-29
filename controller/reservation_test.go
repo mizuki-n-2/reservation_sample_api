@@ -13,7 +13,9 @@ import (
 	"github.com/mizuki-n-2/reservation_sample_api/controller"
 	"github.com/mizuki-n-2/reservation_sample_api/model"
 	"github.com/mizuki-n-2/reservation_sample_api/repository"
+	v "github.com/mizuki-n-2/reservation_sample_api/validator"
 	"github.com/stretchr/testify/assert"
+	"github.com/go-playground/validator/v10"
 )
 
 func TestReservation_GetReservations(t *testing.T) {
@@ -190,7 +192,7 @@ func TestReservation_CreateReservation(t *testing.T) {
 			AdultNumber:              2,
 			PrimarySchoolChildNumber: 0,
 			ChildNumber:              1,
-			ScheduleID: 						 "schedule-id-1",
+			ScheduleID: 						 "38e4cf39-19c3-4a5e-8546-c1dbe1b701dd",
 		}
 		reservation = model.Reservation{
 			ID:                       "created-reservation-id",
@@ -201,17 +203,18 @@ func TestReservation_CreateReservation(t *testing.T) {
 			AdultNumber:              2,
 			PrimarySchoolChildNumber: 0,
 			ChildNumber:              1,
-			ScheduleID: 						 "schedule-id-1",
+			ScheduleID: 						 "38e4cf39-19c3-4a5e-8546-c1dbe1b701dd",
 			SearchID:                 "created-search-id",
 			CreatedAt:                time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC),
 			UpdatedAt:                time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC),
 		}
 		schedule = model.Schedule{
-			ID: 									"schedule-id-1",
+			ID: 									"38e4cf39-19c3-4a5e-8546-c1dbe1b701dd",
 		}
 	)
 
 	e := echo.New()
+	e.Validator = &v.CustomValidator{Validator: validator.New()}
 	requestJSON, err := json.Marshal(request)
 	if err != nil {
 		t.Fatal(err)

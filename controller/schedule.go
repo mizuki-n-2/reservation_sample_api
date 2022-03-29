@@ -34,9 +34,9 @@ func NewScheduleController(
 }
 
 type ScheduleRequest struct {
-	Date      string `json:"date"`
-	StartTime string `json:"start_time"`
-	MaxNumber int    `json:"max_number"`
+	Date      string `json:"date" validate:"omitempty,datetime=2006-01-02"`
+	StartTime string `json:"start_time" validate:"omitempty,datetime=15:04"`
+	MaxNumber int    `json:"max_number" validate:"number,min=1,max=100"`
 }
 
 type ScheduleResponse struct {
@@ -106,6 +106,10 @@ func (sc *scheduleController) CreateSchedule() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, err.Error())
 		}
 
+		if err := c.Validate(&req); err != nil {
+			return c.JSON(http.StatusBadRequest, err.Error())
+		}
+
 		newSchedule, err := model.NewSchedule(req.Date, req.StartTime, req.MaxNumber)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, err.Error())
@@ -138,6 +142,10 @@ func (sc *scheduleController) UpdateSchedule() echo.HandlerFunc {
 
 		var req ScheduleRequest
 		if err := c.Bind(&req); err != nil {
+			return c.JSON(http.StatusBadRequest, err.Error())
+		}
+
+		if err := c.Validate(&req); err != nil {
 			return c.JSON(http.StatusBadRequest, err.Error())
 		}
 

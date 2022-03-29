@@ -36,7 +36,7 @@ func NewScheduleController(
 type ScheduleRequest struct {
 	Date      string `json:"date" validate:"omitempty,datetime=2006-01-02"`
 	StartTime string `json:"start_time" validate:"omitempty,datetime=15:04"`
-	MaxNumber int    `json:"max_number" validate:"number,min=1,max=100"`
+	MaxNumber int    `json:"max_number" validate:"gte=1,lte=100"`
 }
 
 type ScheduleResponse struct {

@@ -35,10 +35,10 @@ func (m *MockScheduleRepository) EXPECT() *MockScheduleRepositoryMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockScheduleRepository) Create(schedule *model.Schedule) (model.Schedule, error) {
+func (m *MockScheduleRepository) Create(schedule *model.Schedule) (*model.Schedule, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Create", schedule)
-	ret0, _ := ret[0].(model.Schedule)
+	ret0, _ := ret[0].(*model.Schedule)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -64,10 +64,10 @@ func (mr *MockScheduleRepositoryMockRecorder) Delete(id interface{}) *gomock.Cal
 }
 
 // FindAll mocks base method.
-func (m *MockScheduleRepository) FindAll() ([]model.Schedule, error) {
+func (m *MockScheduleRepository) FindAll() ([]*model.Schedule, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindAll")
-	ret0, _ := ret[0].([]model.Schedule)
+	ret0, _ := ret[0].([]*model.Schedule)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -79,10 +79,10 @@ func (mr *MockScheduleRepositoryMockRecorder) FindAll() *gomock.Call {
 }
 
 // FindByID mocks base method.
-func (m *MockScheduleRepository) FindByID(id string) (model.Schedule, error) {
+func (m *MockScheduleRepository) FindByID(id string) (*model.Schedule, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindByID", id)
-	ret0, _ := ret[0].(model.Schedule)
+	ret0, _ := ret[0].(*model.Schedule)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -94,10 +94,10 @@ func (mr *MockScheduleRepositoryMockRecorder) FindByID(id interface{}) *gomock.C
 }
 
 // Update mocks base method.
-func (m *MockScheduleRepository) Update(schedule *model.Schedule) (model.Schedule, error) {
+func (m *MockScheduleRepository) Update(schedule *model.Schedule) (*model.Schedule, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Update", schedule)
-	ret0, _ := ret[0].(model.Schedule)
+	ret0, _ := ret[0].(*model.Schedule)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

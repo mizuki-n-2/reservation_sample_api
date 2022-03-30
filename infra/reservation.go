@@ -14,16 +14,16 @@ func NewReservationRepository(db *gorm.DB) repository.ReservationRepository {
 	return &reservationRepository{db: db}
 }
 
-func (rr *reservationRepository) Create(reservation *model.Reservation) (model.Reservation, error) {
-	if err := rr.db.Create(reservation).Error; err != nil {
-		return model.Reservation{}, err
+func (rr *reservationRepository) Create(reservation *model.Reservation) (*model.Reservation, error) {
+	if err := rr.db.Create(&reservation).Error; err != nil {
+		return nil, err
 	}
 
-	return *reservation, nil
+	return reservation, nil
 }
 
-func (rr *reservationRepository) FindAll() ([]model.Reservation, error) {
-	var reservations []model.Reservation
+func (rr *reservationRepository) FindAll() ([]*model.Reservation, error) {
+	var reservations []*model.Reservation
 	if err := rr.db.Find(&reservations).Error; err != nil {
 		return nil, err
 	}
@@ -31,10 +31,10 @@ func (rr *reservationRepository) FindAll() ([]model.Reservation, error) {
 	return reservations, nil
 }
 
-func (rr *reservationRepository) FindByID(id string) (model.Reservation, error) {
-	var reservation model.Reservation
+func (rr *reservationRepository) FindByID(id string) (*model.Reservation, error) {
+	var reservation *model.Reservation
 	if err := rr.db.Where("id = ?", id).First(&reservation).Error; err != nil {
-		return model.Reservation{}, err
+		return nil, err
 	}
 
 	return reservation, nil

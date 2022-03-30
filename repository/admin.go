@@ -8,6 +8,6 @@ import (
 
 type AdminRepository interface {
 	Create(admin *model.Admin) error
-	FindByID(id string) (model.Admin, error)
-	FindByEmail(email string) (model.Admin, error)
+	FindByID(id string) (*model.Admin, error)
+	FindByEmail(email string) (*model.Admin, error)
 }

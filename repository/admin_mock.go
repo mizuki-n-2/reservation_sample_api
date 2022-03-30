@@ -49,10 +49,10 @@ func (mr *MockAdminRepositoryMockRecorder) Create(admin interface{}) *gomock.Cal
 }
 
 // FindByEmail mocks base method.
-func (m *MockAdminRepository) FindByEmail(email string) (model.Admin, error) {
+func (m *MockAdminRepository) FindByEmail(email string) (*model.Admin, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindByEmail", email)
-	ret0, _ := ret[0].(model.Admin)
+	ret0, _ := ret[0].(*model.Admin)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -64,10 +64,10 @@ func (mr *MockAdminRepositoryMockRecorder) FindByEmail(email interface{}) *gomoc
 }
 
 // FindByID mocks base method.
-func (m *MockAdminRepository) FindByID(id string) (model.Admin, error) {
+func (m *MockAdminRepository) FindByID(id string) (*model.Admin, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindByID", id)
-	ret0, _ := ret[0].(model.Admin)
+	ret0, _ := ret[0].(*model.Admin)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

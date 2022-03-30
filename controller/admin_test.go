@@ -56,7 +56,7 @@ func TestAdmin_Login(t *testing.T) {
 	m1 := service.NewMockAuthService(ctrl)
 	m1.EXPECT().GenerateToken(admin.ID).Return(token, nil)
 	m2 := repository.NewMockAdminRepository(ctrl)
-	m2.EXPECT().FindByEmail(request.Email).Return(admin, nil)
+	m2.EXPECT().FindByEmail(request.Email).Return(&admin, nil)
 	
 	c := controller.NewAdminController(m1, m2)
 	if err := c.Login()(context); err != nil {
@@ -99,7 +99,7 @@ func TestAdmin_CreateAdmin(t *testing.T) {
 	defer ctrl.Finish()
 	m1 := service.NewMockAuthService(ctrl)
 	m2 := repository.NewMockAdminRepository(ctrl)
-	m2.EXPECT().FindByEmail(request.Email).Return(model.Admin{}, gorm.ErrRecordNotFound)
+	m2.EXPECT().FindByEmail(request.Email).Return(nil, gorm.ErrRecordNotFound)
 	m2.EXPECT().Create(gomock.Any()).Return(nil)
 
 	c := controller.NewAdminController(m1, m2)

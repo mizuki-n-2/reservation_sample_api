@@ -22,19 +22,19 @@ func (ar *adminRepository) Create(admin *model.Admin) error {
 	return nil
 }
 
-func (ar *adminRepository) FindByID(id string) (model.Admin, error) {
-	var admin model.Admin
+func (ar *adminRepository) FindByID(id string) (*model.Admin, error) {
+	var admin *model.Admin
 	if err := ar.db.Where("id = ?", id).First(&admin).Error; err != nil {
-		return model.Admin{}, err
+		return nil, err
 	}
 
 	return admin, nil
 }
 
-func (ar *adminRepository) FindByEmail(email string) (model.Admin, error) {
-	var admin model.Admin
+func (ar *adminRepository) FindByEmail(email string) (*model.Admin, error) {
+	var admin *model.Admin
 	if err := ar.db.Where("email = ?", email).First(&admin).Error; err != nil {
-		return model.Admin{}, err
+		return nil, err
 	}
 
 	return admin, nil

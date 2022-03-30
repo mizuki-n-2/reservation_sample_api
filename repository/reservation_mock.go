@@ -35,10 +35,10 @@ func (m *MockReservationRepository) EXPECT() *MockReservationRepositoryMockRecor
 }
 
 // Create mocks base method.
-func (m *MockReservationRepository) Create(reservation *model.Reservation) (model.Reservation, error) {
+func (m *MockReservationRepository) Create(reservation *model.Reservation) (*model.Reservation, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Create", reservation)
-	ret0, _ := ret[0].(model.Reservation)
+	ret0, _ := ret[0].(*model.Reservation)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -64,10 +64,10 @@ func (mr *MockReservationRepositoryMockRecorder) Delete(id interface{}) *gomock.
 }
 
 // FindAll mocks base method.
-func (m *MockReservationRepository) FindAll() ([]model.Reservation, error) {
+func (m *MockReservationRepository) FindAll() ([]*model.Reservation, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindAll")
-	ret0, _ := ret[0].([]model.Reservation)
+	ret0, _ := ret[0].([]*model.Reservation)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -79,10 +79,10 @@ func (mr *MockReservationRepositoryMockRecorder) FindAll() *gomock.Call {
 }
 
 // FindByID mocks base method.
-func (m *MockReservationRepository) FindByID(id string) (model.Reservation, error) {
+func (m *MockReservationRepository) FindByID(id string) (*model.Reservation, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindByID", id)
-	ret0, _ := ret[0].(model.Reservation)
+	ret0, _ := ret[0].(*model.Reservation)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

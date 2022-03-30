@@ -14,24 +14,24 @@ func NewScheduleRepository(db *gorm.DB) repository.ScheduleRepository {
 	return &scheduleRepository{db: db}
 }
 
-func (sr *scheduleRepository) Create(schedule *model.Schedule) (model.Schedule, error) {
-	if err := sr.db.Create(schedule).Error; err != nil {
-		return model.Schedule{}, err
+func (sr *scheduleRepository) Create(schedule *model.Schedule) (*model.Schedule, error) {
+	if err := sr.db.Create(&schedule).Error; err != nil {
+		return nil, err
 	}
 
-	return *schedule, nil
+	return schedule, nil
 }
 
-func (sr *scheduleRepository) Update(schedule *model.Schedule) (model.Schedule, error) {
-	if err := sr.db.Save(schedule).Error; err != nil {
-		return model.Schedule{}, err
+func (sr *scheduleRepository) Update(schedule *model.Schedule) (*model.Schedule, error) {
+	if err := sr.db.Save(&schedule).Error; err != nil {
+		return nil, err
 	}
 
-	return *schedule, nil
+	return schedule, nil
 }
 
-func (sr *scheduleRepository) FindAll() ([]model.Schedule, error) {
-	var schedules []model.Schedule
+func (sr *scheduleRepository) FindAll() ([]*model.Schedule, error) {
+	var schedules []*model.Schedule
 	if err := sr.db.Find(&schedules).Error; err != nil {
 		return nil, err
 	}
@@ -45,14 +45,14 @@ func (sr *scheduleRepository) FindAll() ([]model.Schedule, error) {
 	return schedules, nil
 }
 
-func (sr *scheduleRepository) FindByID(id string) (model.Schedule, error) {
-	var schedule model.Schedule
+func (sr *scheduleRepository) FindByID(id string) (*model.Schedule, error) {
+	var schedule *model.Schedule
 	if err := sr.db.Where("id = ?", id).First(&schedule).Error; err != nil {
-		return model.Schedule{}, err
+		return nil, err
 	}
 
 	if err := sr.db.Model(&schedule).Association("Reservations").Find(&schedule.Reservations); err != nil {
-		return model.Schedule{}, err
+		return nil, err
 	}
 
 	return schedule, nil

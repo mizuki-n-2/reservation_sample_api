@@ -21,7 +21,7 @@ import (
 
 func TestSchedule_GetSchedules(t *testing.T) {
 	var (
-		schedules = []model.Schedule{
+		schedules = []*model.Schedule{
 			{
 				ID:        "schedule-id-1",
 				Date:      "2022-01-01",
@@ -133,7 +133,7 @@ func TestSchedule_GetSchedule(t *testing.T) {
 	defer ctrl.Finish()
 	m1 := service.NewMockAuthService(ctrl)
 	m2 := repository.NewMockScheduleRepository(ctrl)
-	m2.EXPECT().FindByID(schedule.ID).Return(schedule, nil)
+	m2.EXPECT().FindByID(schedule.ID).Return(&schedule, nil)
 
 	c := controller.NewScheduleController(m1, m2)
 	if err := c.GetSchedule()(context); err != nil {
@@ -187,7 +187,7 @@ func TestSchedule_CreateSchedule(t *testing.T) {
 	m1 := service.NewMockAuthService(ctrl)
 	m1.EXPECT().ValidateToken(context).Return(nil)
 	m2 := repository.NewMockScheduleRepository(ctrl)
-	m2.EXPECT().Create(gomock.Any()).Return(schedule, nil)
+	m2.EXPECT().Create(gomock.Any()).Return(&schedule, nil)
 
 	c := controller.NewScheduleController(m1, m2)
 	if err := c.CreateSchedule()(context); err != nil {
@@ -248,8 +248,8 @@ func TestSchedule_UpdateSchedule(t *testing.T) {
 	m1 := service.NewMockAuthService(ctrl)
 	m1.EXPECT().ValidateToken(context).Return(nil)
 	m2 := repository.NewMockScheduleRepository(ctrl)
-	m2.EXPECT().FindByID(requestID).Return(oldSchedule, nil)
-	m2.EXPECT().Update(gomock.Any()).Return(updatedSchedule, nil)
+	m2.EXPECT().FindByID(requestID).Return(&oldSchedule, nil)
+	m2.EXPECT().Update(gomock.Any()).Return(&updatedSchedule, nil)
 
 	c := controller.NewScheduleController(m1, m2)
 	if err := c.UpdateSchedule()(context); err != nil {
@@ -289,7 +289,7 @@ func TestSchedule_DeleteSchedule(t *testing.T) {
 	m1 := service.NewMockAuthService(ctrl)
 	m1.EXPECT().ValidateToken(context).Return(nil)
 	m2 := repository.NewMockScheduleRepository(ctrl)
-	m2.EXPECT().FindByID(requestID).Return(schedule, nil)
+	m2.EXPECT().FindByID(requestID).Return(&schedule, nil)
 	m2.EXPECT().Delete(schedule.ID).Return(nil)
 
 	c := controller.NewScheduleController(m1, m2)

@@ -20,7 +20,7 @@ import (
 
 func TestReservation_GetReservations(t *testing.T) {
 	var (
-		reservations = []model.Reservation{
+		reservations = []*model.Reservation{
 			{
 				ID:                       "reservation-id-1",
 				Name:                     "user1",
@@ -71,7 +71,7 @@ func TestReservation_GetReservations(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, rec.Code)
 
-	var actual []model.Reservation
+	var actual []*model.Reservation
 	if err := json.Unmarshal(rec.Body.Bytes(), &actual); err != nil {
 		t.Fatal(err)
 	}
@@ -107,7 +107,7 @@ func TestReservation_GetReservation(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	m1 := repository.NewMockReservationRepository(ctrl)
-	m1.EXPECT().FindByID(reservation.ID).Return(reservation, nil)
+	m1.EXPECT().FindByID(reservation.ID).Return(&reservation, nil)
 	m2 := repository.NewMockScheduleRepository(ctrl)
 
 	c := controller.NewReservationController(m1, m2)
@@ -169,7 +169,7 @@ func TestReservation_DeleteReservation(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	m1 := repository.NewMockReservationRepository(ctrl)
-	m1.EXPECT().FindByID(reservations[0].ID).Return(reservations[0], nil)
+	m1.EXPECT().FindByID(reservations[0].ID).Return(&reservations[0], nil)
 	m1.EXPECT().Delete(reservations[0].ID).Return(nil)
 	m2 := repository.NewMockScheduleRepository(ctrl)
 
@@ -231,9 +231,9 @@ func TestReservation_CreateReservation(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	m1 := repository.NewMockReservationRepository(ctrl)
-	m1.EXPECT().Create(gomock.Any()).Return(reservation, nil)
+	m1.EXPECT().Create(gomock.Any()).Return(&reservation, nil)
 	m2 := repository.NewMockScheduleRepository(ctrl)
-	m2.EXPECT().FindByID(request.ScheduleID).Return(schedule, nil)
+	m2.EXPECT().FindByID(request.ScheduleID).Return(&schedule, nil)
 
 	c := controller.NewReservationController(m1, m2)
 	if err := c.CreateReservation()(context); err != nil {

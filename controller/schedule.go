@@ -155,12 +155,11 @@ func (sc *scheduleController) UpdateSchedule() echo.HandlerFunc {
 			return c.JSON(http.StatusNotFound, err.Error())
 		}
 
-		err = oldSchedule.UpdateMaxNumber(req.MaxNumber)
-		if err != nil {
+		if err = oldSchedule.UpdateMaxNumber(req.MaxNumber); err != nil {
 			return c.JSON(http.StatusBadRequest, err.Error())
 		}
 
-		schedule, err := sc.scheduleRepository.Update(&oldSchedule)
+		schedule, err := sc.scheduleRepository.Update(oldSchedule)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, err.Error())
 		}

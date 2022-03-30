@@ -1,13 +1,13 @@
 package model
 
 import (
-	"errors"
 	"fmt"
-	"github.com/google/uuid"
-	"golang.org/x/crypto/bcrypt"
 	"regexp"
 	"time"
 	"unicode/utf8"
+
+	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Admin struct {
@@ -70,7 +70,7 @@ var (
 
 func NewEmail(value string) (Email, error) {
 	if !regexp.MustCompile(EMAIL_PATTERN).MatchString(value) {
-		return "", errors.New("emailの形式が正しくありません")
+		return "", fmt.Errorf("emailの形式が正しくありません")
 	}
 
 	return Email(value), nil
@@ -97,9 +97,8 @@ func NewPassword(value string) (Password, error) {
 }
 
 func (admin *Admin) CheckPassword(password string) error {
-	err := bcrypt.CompareHashAndPassword([]byte(admin.Password), []byte(password))
-	if err != nil {
-		return err
+	if err := bcrypt.CompareHashAndPassword([]byte(admin.Password), []byte(password)); err != nil {
+		return fmt.Errorf("パスワードが一致しません")
 	}
 
 	return nil

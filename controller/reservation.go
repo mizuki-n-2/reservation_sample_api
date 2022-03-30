@@ -1,10 +1,12 @@
 package controller
 
 import (
+	"fmt"
+	"net/http"
+
 	"github.com/labstack/echo/v4"
 	"github.com/mizuki-n-2/reservation_sample_api/model"
 	"github.com/mizuki-n-2/reservation_sample_api/repository"
-	"net/http"
 )
 
 type ReservationController interface {
@@ -56,15 +58,14 @@ func (rc *reservationController) CreateReservation() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, err.Error())
 		}
 
+		_, err := rc.scheduleRepository.FindByID(req.ScheduleID)
+		if err != nil {
+			return c.JSON(http.StatusNotFound, fmt.Errorf("スケジュールが存在しません"))
+		}
+
 		newReservation, err := model.NewReservation(req.Name, req.Email, req.PhoneNumber, req.Address, req.AdultNumber, req.PrimarySchoolChildNumber, req.ChildNumber, req.ScheduleID)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, err.Error())
-		}
-
-		_, err = rc.scheduleRepository.FindByID(req.ScheduleID)
-		// TODO: 適切なエラーハンドリング(スケジュールが存在しない場合)
-		if err != nil {
-			return c.JSON(http.StatusNotFound, err.Error())
 		}
 
 		reservation, err := rc.reservationRepository.Create(newReservation)

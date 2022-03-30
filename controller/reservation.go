@@ -24,14 +24,14 @@ func NewReservationController(reservationRepository repository.ReservationReposi
 }
 
 type ReservationRequest struct {
-	Name                     string `json:"name"`
-	Email                    string `json:"email"`
-	PhoneNumber              string `json:"phone_number"`
-	Address                  string `json:"address"`
-	AdultNumber              int    `json:"adult_number"`
-	PrimarySchoolChildNumber int    `json:"primary_school_child_number"`
-	ChildNumber              int    `json:"child_number"`
-	ScheduleID               string `json:"schedule_id"`
+	Name                     string `json:"name" validate:"required,min=2,max=20"`
+	Email                    string `json:"email" validate:"required,email"`
+	PhoneNumber              string `json:"phone_number" validate:"required,phone"`
+	Address                  string `json:"address" validate:"required,max=50"`
+	AdultNumber              int    `json:"adult_number" validate:"gte=0,lte=50"`
+	PrimarySchoolChildNumber int    `json:"primary_school_child_number" validate:"gte=0,lte=50"`
+	ChildNumber              int    `json:"child_number" validate:"gte=0,lte=50"`
+	ScheduleID               string `json:"schedule_id" validate:"required,uuid4"`
 }
 
 func (rc *reservationController) GetReservations() echo.HandlerFunc {
@@ -49,6 +49,10 @@ func (rc *reservationController) CreateReservation() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var req ReservationRequest
 		if err := c.Bind(&req); err != nil {
+			return c.JSON(http.StatusBadRequest, err.Error())
+		}
+
+		if err := c.Validate(&req); err != nil {
 			return c.JSON(http.StatusBadRequest, err.Error())
 		}
 

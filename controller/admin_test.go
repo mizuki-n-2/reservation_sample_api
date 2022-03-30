@@ -13,8 +13,10 @@ import (
 	"github.com/mizuki-n-2/reservation_sample_api/model"
 	"github.com/mizuki-n-2/reservation_sample_api/repository"
 	"github.com/mizuki-n-2/reservation_sample_api/service"
+	v "github.com/mizuki-n-2/reservation_sample_api/validator"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
+	"github.com/go-playground/validator/v10"
 )
 
 func TestAdmin_Login(t *testing.T) {
@@ -39,6 +41,7 @@ func TestAdmin_Login(t *testing.T) {
 	}
 
 	e := echo.New()
+	e.Validator = &v.CustomValidator{Validator: validator.New()}
 	requestJSON, err := json.Marshal(request)
 	if err != nil {
 		t.Fatal(err)
@@ -82,6 +85,7 @@ func TestAdmin_CreateAdmin(t *testing.T) {
 	)
 
 	e := echo.New()
+	e.Validator = &v.CustomValidator{Validator: validator.New()}
 	requestJSON, err := json.Marshal(request)
 	if err != nil {
 		t.Fatal(err)

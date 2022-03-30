@@ -27,9 +27,9 @@ func NewAdminController(authService service.AuthService, adminRepository reposit
 }
 
 type AdminRequest struct {
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Name     string `json:"name" validate:"omitempty,min=2,max=20"`
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required,min=8,max=30"`
 }
 
 type LoginResponse struct {
@@ -44,6 +44,10 @@ func (ac *adminController) Login() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var req AdminRequest
 		if err := c.Bind(&req); err != nil {
+			return c.JSON(http.StatusBadRequest, err.Error())
+		}
+
+		if err := c.Validate(&req); err != nil {
 			return c.JSON(http.StatusBadRequest, err.Error())
 		}
 
@@ -73,6 +77,10 @@ func (ac *adminController) CreateAdmin() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var req AdminRequest
 		if err := c.Bind(&req); err != nil {
+			return c.JSON(http.StatusBadRequest, err.Error())
+		}
+
+		if err := c.Validate(&req); err != nil {
 			return c.JSON(http.StatusBadRequest, err.Error())
 		}
 

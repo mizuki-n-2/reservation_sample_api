@@ -3,11 +3,12 @@ package model
 import (
 	"errors"
 	"fmt"
-	"github.com/google/uuid"
-	"golang.org/x/crypto/bcrypt"
 	"regexp"
 	"time"
 	"unicode/utf8"
+
+	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Admin struct {
@@ -97,9 +98,8 @@ func NewPassword(value string) (Password, error) {
 }
 
 func (admin *Admin) CheckPassword(password string) error {
-	err := bcrypt.CompareHashAndPassword([]byte(admin.Password), []byte(password))
-	if err != nil {
-		return err
+	if err := bcrypt.CompareHashAndPassword([]byte(admin.Password), []byte(password)); err != nil {
+		return fmt.Errorf("パスワードが一致しません")
 	}
 
 	return nil

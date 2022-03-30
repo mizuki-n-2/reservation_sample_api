@@ -226,7 +226,7 @@ func TestReservation_NewNumberOfPeople(t *testing.T) {
 			args: args{
 				value: -2,
 			},
-			wantNumberOfPeople: -1,
+			wantNumberOfPeople: 0,
 			wantErr:            fmt.Errorf("人数は%d人以上%d人以下にしてください", model.MIN_NUMBER_OF_PEOPLE, model.MAX_NUMBER_OF_PEOPLE),
 		},
 		{
@@ -234,7 +234,7 @@ func TestReservation_NewNumberOfPeople(t *testing.T) {
 			args: args{
 				value: 100,
 			},
-			wantNumberOfPeople: -1,
+			wantNumberOfPeople: 0,
 			wantErr:            fmt.Errorf("人数は%d人以上%d人以下にしてください", model.MIN_NUMBER_OF_PEOPLE, model.MAX_NUMBER_OF_PEOPLE),
 		},
 	}

@@ -1,7 +1,6 @@
 package model
 
 import (
-	"errors"
 	"fmt"
 	"regexp"
 	"time"
@@ -71,7 +70,7 @@ var (
 
 func NewEmail(value string) (Email, error) {
 	if !regexp.MustCompile(EMAIL_PATTERN).MatchString(value) {
-		return "", errors.New("emailの形式が正しくありません")
+		return "", fmt.Errorf("emailの形式が正しくありません")
 	}
 
 	return Email(value), nil

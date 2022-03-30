@@ -1,7 +1,6 @@
 package model_test
 
 import (
-	"errors"
 	"fmt"
 	"reflect"
 	"testing"
@@ -153,7 +152,7 @@ func TestAdmin_NewEmail(t *testing.T) {
 				value: "userexample.com",
 			},
 			wantEmail: "",
-			wantErr:   errors.New("emailの形式が正しくありません"),
+			wantErr:   fmt.Errorf("emailの形式が正しくありません"),
 		},
 		{
 			name: "異常系：@の前がない場合エラーを返す",
@@ -161,7 +160,7 @@ func TestAdmin_NewEmail(t *testing.T) {
 				value: "@example.com",
 			},
 			wantEmail: "",
-			wantErr:   errors.New("emailの形式が正しくありません"),
+			wantErr:   fmt.Errorf("emailの形式が正しくありません"),
 		},
 		{
 			name: "異常系：@の後がない場合エラーを返す",
@@ -169,7 +168,7 @@ func TestAdmin_NewEmail(t *testing.T) {
 				value: "user@",
 			},
 			wantEmail: "",
-			wantErr:   errors.New("emailの形式が正しくありません"),
+			wantErr:   fmt.Errorf("emailの形式が正しくありません"),
 		},
 	}
 

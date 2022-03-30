@@ -182,7 +182,7 @@ func TestSchedule_NewMaxNumber(t *testing.T) {
 			args: args{
 				value: 0,
 			},
-			wantMaxNumber: -1,
+			wantMaxNumber: 0,
 			wantErr: fmt.Errorf("max_numberは%d以上%d以下にしてください", model.MIN_MAX_NUMBER, model.MAX_MAX_NUMBER),
 		},
 		{
@@ -190,7 +190,7 @@ func TestSchedule_NewMaxNumber(t *testing.T) {
 			args: args{
 				value: 200,
 			},
-			wantMaxNumber: -1,
+			wantMaxNumber: 0,
 			wantErr: fmt.Errorf("max_numberは%d以上%d以下にしてください", model.MIN_MAX_NUMBER, model.MAX_MAX_NUMBER),
 		},
 	}

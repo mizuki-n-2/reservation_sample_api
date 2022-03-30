@@ -109,7 +109,7 @@ var (
 
 func NewNumberOfPeople(value int) (NumberOfPeople, error) {
 	if value < MIN_NUMBER_OF_PEOPLE || value > MAX_NUMBER_OF_PEOPLE {
-		return -1, fmt.Errorf("人数は%d人以上%d人以下にしてください", MIN_NUMBER_OF_PEOPLE, MAX_NUMBER_OF_PEOPLE)
+		return 0, fmt.Errorf("人数は%d人以上%d人以下にしてください", MIN_NUMBER_OF_PEOPLE, MAX_NUMBER_OF_PEOPLE)
 	}
 
 	return NumberOfPeople(value), nil

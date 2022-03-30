@@ -82,7 +82,7 @@ var (
 
 func NewMaxNumber(value int) (MaxNumber, error) {
 	if value < MIN_MAX_NUMBER || value > MAX_MAX_NUMBER {
-		return -1, fmt.Errorf("max_numberは%d以上%d以下にしてください", MIN_MAX_NUMBER, MAX_MAX_NUMBER)
+		return 0, fmt.Errorf("max_numberは%d以上%d以下にしてください", MIN_MAX_NUMBER, MAX_MAX_NUMBER)
 	}
 
 	return MaxNumber(value), nil
